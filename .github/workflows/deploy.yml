@@ -1,0 +1,33 @@
+name: Deploy Quartz site to GitHub Pages      # ① 工作流程名稱
+
+on:                                          # ② 觸發條件
+  push:
+    branches: [main]
+
+permissions:                                 # ③ 必要權限（GitHub Pages 要求）
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:                                        # ④ 兩個 Job：build ➜ deploy
+  build:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm ci
+      - run: npx quartz build
+      - uses: actions/upload-pages-artifact@v3     # ← 上傳靜態檔案
+        with:
+          path: public
+
+  deploy:
+    needs: build                               # ← 等 build 成功才跑
+    environment:
+      name: github-pages
+    runs-on: ubuntu-latest
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4          # ← 發佈到 GitHub Pages
