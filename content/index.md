@@ -1,6 +1,6 @@
 ---
-title: 我的第一篇文章
-description: 給搜尋引擎與社群分享的摘要
+title: 關於我
+description: jimmy-resume
 tags: [隨筆, 技術]
 published: 2025-06-01        # 發布日
 draft: false            # true 時不會出現在網站
@@ -13,7 +13,7 @@ draft: false            # true 時不會出現在網站
 
 ## 工作經歷
 
-### 前端技術經理 | MAYO 智信數位科技  
+### 前端技術經理 | 主任工程師 | MAYO 鼎恒數位科技
 2021.05 – Present  
 **職責**  
 - 規劃 **Nx Monorepo + Module Federation**，整合 3 套前端環境 → 2 套並統一技術棧  
