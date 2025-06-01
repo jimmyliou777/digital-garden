@@ -13,50 +13,71 @@ draft: false            # true 時不會出現在網站
 
 ## 工作經歷
 
-### 前端技術經理 | 主任工程師 | MAYO 鼎恒數位科技
-2021.05 – Present  
-**職責**  
-- 規劃 **Nx Monorepo + Module Federation**，整合 3 套前端環境 → 2 套並統一技術棧  
-- 建立 **共用 UI 元件庫**（Storybook + Chromatic），制定程式碼規範與版本治理流程  
-- 設計 **Azure DevOps Pipeline** ＋ Docker/K8s（AKS），導入 Nx Cache 與 Buildx  
-- 整合 **OpenTelemetry + Sentry + Grafana Faro**，建立 Error Budget KPI 與自動警示  
-- 推動 **AI-Driven PR Reviewer Agent**（OpenAI Function-Calling）與 AI 排班系統  
+### 🚀 前端技術經理 | 主任工程師 | MAYO 鼎恒數位科技
+**2021.05 – Present**  
 
-**成果 / 指標**  
-- 元件重用率 **+40 %**；前端團隊人力需求 **-50 %**  
-- Build 時間 **8 → 2 min**，Release 週期 月 → 週  
-- 線上 **MTTR 2 hr → 20 min**；Error Rate **-60 %**  
-- 排班配置時間 **3 天 → 1 小時**，使用者滿意度 **+22 pts**
+#### 核心職責
+- **架構設計與技術升級**  
+  建構 Nx Monorepo + 微前端架構，整合多個前端應用，分階段導入新技術並升級既有專案
+  
+- **企業標準化推動**  
+  導入 Storybook + React + Tailwind 架構，建立共用元件庫，統一開發標準
 
----
+- **DevOps 與 AI 自動化**  
+  設計 Azure DevOps Pipeline + Docker/K8s (AKS) 部署流程，並開發 AI-Driven PR Reviewer Agent
 
-### 前端高級工程師 | 博裕科技  
-2017.08 – 2021.04  
-**職責**  
-- 建立 **Node.js + Koa + Next.js (SSR)** 架構與 SEO 最佳化  
-- 導入 **Redux + Immutable.js** 與 **GraphQL (Apollo)**，降低 API Request 數量  
-- 推行 **ESLint / TypeScript / Prettier** 代碼規範＋ pre-commit hooks  
-- 撰寫 **Jest + Testing Library** 單元／元件測試 (200+ cases)  
-- AWS **ECS** 容器化部署（DEV/QAT/UAT）＋ ALB Canary，實現零停機佈署  
+#### 🎯 重大成果
+| 指標 | 改善幅度 | 具體成效 |
+|------|----------|----------|
+| **元件重用率** | **+40%** | 建立標準化 UI 元件庫，跨團隊共用設計 |
+| **開發時程** | **-33%** | 3天 UI 任務縮短至 2天內完成 |
+| **Build 時間** | **6→2 分鐘** | Nx Cache + 分散式快取優化 |
 
-**成果 / 指標**  
-- API 發送量 **-30 %**；Bundle Size **-35 %**  
-- 新功能開發時程 **-30 %**；重大線上事故每月 2 → 0-1 次
+#### 💡 技術亮點
+**🤖 AI-Driven PR Reviewer Agent**
+- 利用 OpenAI GPT + Function Calling 打造智能代碼審查系統
+- 自動分析 PR Diff、Commit 歷史，生成審查建議與風險提示
+- 整合 CI/CD 流程，實現 PR 建立即觸發自動審查
+- 支援多語言註解，提升團隊協作效率
 
----
-
-### 後端工程師 | 亞卡西  
-2013.04 – 2017.08  
-- PHP → Node.js 微服務重構，維運人力 2 → 1 人  
-- HTML5 + Canvas/GSAP 行銷頁，活動轉換率 **+15 %**  
-- SEO / Schema Markup 優化，自然流量 **+20 %**
+**🏗 微前端架構設計**
+- 採用 Module Federation 技術，實現應用獨立部署
+- 建立統一的設計系統，推動高複用、低耦合設計
+- 精簡依賴管理，改善 tree shaking 效果
 
 ---
 
-### 後端工程師 | 壹美旅行社  
-2011.04 – 2013.03  
-- LAMP Stack 旅遊電商平台；關鍵字前 3 名 **+30 %**  
-- 引入 Laravel MVC，功能交付效率 **+25 %**
+### 💻 前端高級工程師 | 博裕科技  
+**2017.08 – 2021.04**  
+
+#### 核心職責
+- **全端技術棧建構** - Node.js + Koa + Next.js (SSR) 架構與 SEO 優化
+- **狀態管理優化** - 導入 Redux + Immutable.js + GraphQL (Apollo)
+- **品質保證體系** - 建立 ESLint/TypeScript/Prettier 規範 + pre-commit hooks
+- **測試自動化** - 撰寫 Jest + Testing Library 測試案例 (200+ cases)
+- **雲端部署** - AWS ECS 容器化部署 + ALB Canary 零停機佈署
+
+#### 🎯 關鍵成果
+- **API 請求量減少 30%** - GraphQL 查詢優化，減少冗餘請求
+- **Bundle Size 縮減 35%** - 代碼分割與依賴優化
+- **開發效率提升 30%** - 標準化工具鏈與自動化流程
+- **系統穩定性** - 重大線上事故從每月 2 次降至 0-1 次
+
+---
+
+### 🔧 後端工程師 | 亞卡西雅  
+**2013.04 – 2017.08**
+1.負責電商前台網站建置、開發日常維護
+2.後台系統新功能開發，日常維護
+3.製作宣傳活動頁面，加入HTML5+JS動畫效果
+
+---
+
+### 🌐 後端工程師 | 喜美旅行社  
+**2011.04 – 2013.03**
+1.負責電商前台網站建置、開發日常維護
+2.後台系統新功能開發，日常維護
+3.製作宣傳活動頁面，加入HTML5+JS動畫效果
 
 ---
 
@@ -70,9 +91,9 @@ draft: false            # true 時不會出現在網站
 
 ## 代表績效指標
 
-- **元件重用率** +40 %　　**Error Rate** -60 %  
-- **Build 時間** 8 → 2 min　**MTTR** 2 hr → 20 min  
-- **前端團隊人力需求** -50 %　**Release 週期** 月 → 週  
+- **元件重用率** +40 %
+- **Build 時間** 8 → 2 min
+- **前端團隊人力需求** -50 %  
 
 ---
 
