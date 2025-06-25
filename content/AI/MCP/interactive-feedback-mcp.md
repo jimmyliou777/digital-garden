@@ -1,3 +1,10 @@
+---
+title:  MCP (interactive-feedback-mcp) 增強您的 AI 輔助開發流程
+description: 透過互動式回饋 MCP (interactive-feedback-mcp) 增強您的 AI 輔助開發流程
+tags: [Cursor, MCP, 技術指南]
+published: 2025-06-25
+draft: false
+---
 # 透過互動式回饋 MCP (interactive-feedback-mcp) 增強您的 AI 輔助開發流程
 
 在現今的軟體開發領域，AI 輔助工具（如 Cursor）已成為許多開發者不可或缺的夥伴。然而，AI 的自主性有時也可能導致一連串不必要的工具呼叫，浪費了寶貴的時間與資源。為了解決這個問題，開發者 Fábio Ferreira (@fabiomlferreira) 建立了一個名為 **interactive-feedback-mcp** 的開源專案，旨在將「人類在環」(human-in-the-loop) 的概念導入 AI 輔助開發流程中。
