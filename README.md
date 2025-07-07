@@ -9,6 +9,10 @@ Quartz v4 features a from-the-ground rewrite focusing on end-user extensibility 
 
 [Join the Discord Community](https://discord.gg/cRFFHYye7t)
 
+# 啟動熱重載伺服器
+npx quartz build --serve   #
+### 瀏覽器開 http://localhost:8080
+
 ## Sponsors
 
 <p align="center">
