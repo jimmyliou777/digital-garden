@@ -1,5 +1,5 @@
 ---
-title: AI Integration Guide Prompt
+title: AI 協作體系建設指南
 description: 專案 AI 協作體系建設
 tags: [Prompt, AI, Integration]
 published: 2025-07-13
