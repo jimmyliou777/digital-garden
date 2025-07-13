@@ -1,5 +1,5 @@
 ---
-title: AI Building Prompt
+title: AI PM Prompt
 description: AI構建專案提示詞模板
 tags: [Prompt, AI]
 published: 2025-07-09
