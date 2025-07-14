@@ -8,8 +8,7 @@ draft: false
 # AI 上下文自動更新腳本 (改進版)
 
 ```javascript
-// 
-#!/usr/bin/env node
+// #!/usr/bin/env node
 
 /**
  * AI 上下文自動更新腳本 (改進版)
