@@ -78,7 +78,7 @@ draft: false
 4. **精簡可維護**: 避免內容重複，保持文檔精簡
 5. **即用性**: 提供可直接使用的協作模板
 
-**請生成包含以下結構的完整 AI-QUICK-REF.md**:
+**請生成包含以下結構的完整 docs/AI-QUICK-REF.md**:
 
 # 🤖 AI Agent 協作指南
 
@@ -96,7 +96,7 @@ draft: false
 
 ### 進階協作模板
 你是 [專案名稱] 專案的資深開發者，請參考：
-- AI-QUICK-REF.md 的核心約定和開發規範
+- docs/AI-QUICK-REF.md 的核心約定和開發規範
 - docs/ai-context.md 的專案技術上下文
 - snapshot.md 的專案結構
 - 現有程式碼模式 ([實際的關鍵目錄])
@@ -109,7 +109,7 @@ draft: false
 
 | 優先級 | 文檔 | 用途 |
 |--------|------|------|
-| 🔥🔥🔥 | `AI-QUICK-REF.md` (本文檔) | **AI 協作完整入口** - 核心約定、規範、模板 |
+| 🔥🔥🔥 | `docs/AI-QUICK-REF.md` (本文檔) | **AI 協作完整入口** - 核心約定、規範、模板 |
 | 🔥🔥 | [`docs/ai-context.md`](docs/ai-context.md) | 專案技術上下文 |
 | 🔥 | [`snapshot.md`](../snapshot.md) | 專案結構快照 |
 ```
@@ -220,7 +220,7 @@ src/
 ## 🔄 AI Agent 標準流程（整合）
 
 ### 文檔發現流程
-1. **首先閱讀**: `AI-QUICK-REF.md` (本文檔) - 獲取核心約定和規範
+1. **首先閱讀**: `docs/AI-QUICK-REF.md` (本文檔) - 獲取核心約定和規範
 2. **深入了解**: `docs/ai-context.md` - 理解專案技術上下文
 3. **參考結構**: `snapshot.md` - 了解專案架構
 4. **開始協作**: 使用上方的協作場景模板
@@ -905,7 +905,7 @@ node scripts/update-ai-context.js
    - 使用模板1進行技術棧和架構分析
 
 2. **生成AI協作指南** (8分鐘)
-   - 使用模板2生成整合的 `AI-QUICK-REF.md`
+   - 使用模板2生成整合的 `docs/AI-QUICK-REF.md`
    - 包含核心約定、開發規範、協作模板、工作流程
 
 3. **設置自動化** (2分鐘)
@@ -930,7 +930,7 @@ node scripts/update-ai-context.js
 ###  **精簡文檔體系檢查**
 
 #### ✅ **核心文檔檢查清單**
-- [ ] `AI-QUICK-REF.md` - 整合的AI協作完整入口
+- [ ] `docs/AI-QUICK-REF.md` - 整合的AI協作完整入口
 - [ ] `docs/ai-context.md` - 專案技術上下文（自動生成）
 - [ ] `snapshot.md` - 專案結構快照（自動生成）
 
