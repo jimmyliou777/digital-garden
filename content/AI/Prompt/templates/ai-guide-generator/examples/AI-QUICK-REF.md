@@ -3,6 +3,33 @@
 
 > **MAYO PT Web - AI 協作完整入口**
 
+## 🎯 快速開始提示模板
+
+### 基本協作模板
+```markdown
+你是 MAYO PT Web 專案的資深開發者，請參考：
+- AI-QUICK-REF.md 的核心約定和開發規範
+- docs/ai-context.md 的專案技術上下文
+- snapshot.md 的專案結構
+- 現有程式碼模式 (src/hooks/api/, src/components/, src/lib/jotai/)
+
+**我需要**: [描述你的具體需求]
+```
+
+### 進階協作模板
+```markdown
+你是 MAYO PT Web 專案的資深開發者，請參考：
+- AI-QUICK-REF.md 的核心約定和開發規範
+- docs/ai-context.md 的專案技術上下文
+- snapshot.md 的專案結構
+- 現有程式碼模式 (src/hooks/api/, src/components/, src/lib/jotai/)
+
+**任務**: [具體需求]
+**技術約束**: React 18 + TypeScript + TanStack Query + Jotai + @mayo/mayo-ui-beta
+**參考模式**: [指定要參考的具體檔案或模式]
+**期望輸出**: [描述期望的格式和內容]
+```
+
 ## ⚡ 核心約定
 
 ### ✅ 必須使用
