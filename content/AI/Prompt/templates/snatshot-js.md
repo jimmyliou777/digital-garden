@@ -23,10 +23,10 @@ draft: false
  * 要排除掃描的檔案或資料夾（相對於專案根目錄）
  * 使用者可自行新增或移除
  */
-const EXCLUDES = ['node_modules', '.git', 'dist', 'build'];
+const EXCLUDES = ["node_modules", "dist", "build", "docs"];
 
 /** 支援的檔案副檔名，可按需擴充 */
-const FILE_EXTENSIONS = ['.js', '.ts', '.vue'];
+const FILE_EXTENSIONS = [".js", ".ts", ".vue"];
 
 /** 目錄樹最大深度，0 或 null 表示不限 */
 const MAX_DEPTH = 0;
@@ -51,14 +51,18 @@ const PARSERS = {
 ///////////////////////////////////////
 // 2. 引入 Node 內建模組
 ///////////////////////////////////////
-const fs = require('fs');
-const path = require('path');
+const fs = require("fs");
+const path = require("path");
 
 ///////////////////////////////////////
 // 3. 判斷是否排除路徑
 ///////////////////////////////////////
 function isExcluded(filePath) {
-  return EXCLUDES.some(ex => filePath.includes(ex));
+  // 檢查固定排除清單
+  if (EXCLUDES.some((ex) => filePath.includes(ex))) return true;
+  
+  // 檢查是否包含以 . 開頭的資料夾
+  return filePath.split(path.sep).some(part => part.startsWith('.') && part !== '.');
 }
 
 ///////////////////////////////////////
@@ -83,7 +87,7 @@ function scanFiles(dir, fileList = []) {
 // 5. 解析檔案中函式／方法
 ///////////////////////////////////////
 function parseFile(filePath) {
-  const content = fs.readFileSync(filePath, 'utf-8');
+  const content = fs.readFileSync(filePath, "utf-8");
   let parser = null;
   if (PARSERS.controller.test.test(content)) {
     parser = PARSERS.controller;
@@ -102,9 +106,9 @@ function parseFile(filePath) {
     while ((match = parser.regex.exec(line)) !== null) {
       // 取出函式名稱與參數
       const name = match[1] || match[3];
-      const params = match[2] || match[4] || '';
+      const params = match[2] || match[4] || "";
       // 嘗試讀取上一行的單行註解
-      let comment = '';
+      let comment = "";
       if (idx > 0) {
         const prev = lines[idx - 1].match(parser.comment);
         if (prev) comment = prev[1].trim();
@@ -119,21 +123,21 @@ function parseFile(filePath) {
 ///////////////////////////////////////
 // 6. 生成 ASCII 目錄樹
 ///////////////////////////////////////
-function buildTree(dir, prefix = '', depth = 1) {
-  if (MAX_DEPTH && depth > MAX_DEPTH) return '';
-  let tree = '';
+function buildTree(dir, prefix = "", depth = 1) {
+  if (MAX_DEPTH && depth > MAX_DEPTH) return "";
+  let tree = "";
   const entries = fs
     .readdirSync(dir)
-    .filter(name => !isExcluded(path.join(dir, name)))
+    .filter((name) => !isExcluded(path.join(dir, name)))
     .sort();
 
   entries.forEach((name, idx) => {
     const fullPath = path.join(dir, name);
     const isDir = fs.statSync(fullPath).isDirectory();
-    const connector = idx === entries.length - 1 ? '└── ' : '├── ';
+    const connector = idx === entries.length - 1 ? "└── " : "├── ";
     tree += `${prefix}${connector}${name}\n`;
     if (isDir) {
-      const newPrefix = prefix + (idx === entries.length - 1 ? '    ' : '│   ');
+      const newPrefix = prefix + (idx === entries.length - 1 ? "    " : "│   ");
       tree += buildTree(fullPath, newPrefix, depth + 1);
     }
   });
@@ -152,7 +156,7 @@ function findPackages(dir, list = []) {
     const stat = fs.statSync(fullPath);
     if (stat.isDirectory()) {
       findPackages(fullPath, list);
-    } else if (name === 'package.json') {
+    } else if (name === "package.json") {
       list.push(fullPath);
     }
   }
@@ -171,7 +175,7 @@ function main() {
   // 掃描所有檔案並解析函式
   const files = scanFiles(root);
   const funcMap = {}; // filePath -> [ {name, params, comment}, ... ]
-  files.forEach(fp => {
+  files.forEach((fp) => {
     const rel = path.relative(root, fp);
     const funcs = parseFile(fp);
     if (funcs.length) funcMap[rel] = funcs;
@@ -180,9 +184,9 @@ function main() {
   // 收集依賴
   const pkgFiles = findPackages(root);
   const depsMap = {}; // projectName -> { dependencies, devDependencies }
-  pkgFiles.forEach(pf => {
+  pkgFiles.forEach((pf) => {
     try {
-      const data = JSON.parse(fs.readFileSync(pf, 'utf-8'));
+      const data = JSON.parse(fs.readFileSync(pf, "utf-8"));
       const proj = data.name || path.basename(path.dirname(pf));
       depsMap[proj] = {
         dependencies: data.dependencies || {},
@@ -194,47 +198,51 @@ function main() {
   });
 
   // 組合 Markdown
-  let md = '';
+  let md = "";
 
   // 1. 專案目錄結構
-  md += '## 專案目錄結構\n\n';
-  md += '```text\n' + tree + '```\n\n';
+  md += "## 專案目錄結構\n\n";
+  md += "```text\n" + tree + "```\n\n";
 
   // 2. 函式清單
-  md += '## 函式清單\n\n';
+  md += "## 函式清單\n\n";
   for (const [file, funcs] of Object.entries(funcMap)) {
     md += `### ${file}\n`;
-    funcs.forEach(f => {
-      md += `- **${f.name}(${f.params})**${f.comment ? ' - ' + f.comment : ''}\n`;
+    funcs.forEach((f) => {
+      md += `- **${f.name}(${f.params})**${
+        f.comment ? " - " + f.comment : ""
+      }\n`;
     });
-    md += '\n';
+    md += "\n";
   }
 
   // 3. 依賴清單
-  md += '## 依賴清單\n\n';
+  md += "## 依賴清單\n\n";
   for (const [proj, info] of Object.entries(depsMap)) {
     md += `## ${proj}\n\n`;
-    md += '### devDependencies\n';
+    md += "### devDependencies\n";
     if (Object.keys(info.devDependencies).length) {
-      md += '```json\n' + JSON.stringify(info.devDependencies, null, 2) + '\n```\n';
+      md +=
+        "```json\n" + JSON.stringify(info.devDependencies, null, 2) + "\n```\n";
     } else {
-      md += '無\n';
+      md += "無\n";
     }
-    md += '\n### dependencies\n';
+    md += "\n### dependencies\n";
     if (Object.keys(info.dependencies).length) {
-      md += '```json\n' + JSON.stringify(info.dependencies, null, 2) + '\n```\n';
+      md +=
+        "```json\n" + JSON.stringify(info.dependencies, null, 2) + "\n```\n";
     } else {
-      md += '無\n';
+      md += "無\n";
     }
-    md += '\n';
+    md += "\n";
   }
 
   // 輸出至 snapshot.md
-  fs.writeFileSync(path.join(root, 'snapshot.md'), md, 'utf-8');
-  console.log('已生成 snapshot.md');
+  fs.writeFileSync(path.join(root, "snapshot.md"), md, "utf-8");
+  console.log("已生成 snapshot.md");
 }
 
 // 執行主流程
-main();
+main(); 
 
 ```
