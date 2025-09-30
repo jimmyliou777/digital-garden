@@ -1,4 +1,11 @@
-# AI 代理開發提示詞：可執行規格 (Executable Specification)
+---
+title: AI PM Prompt
+description: AI構建專案提示詞模板
+tags: [Prompt, AI]
+published: 2025-09-30
+draft: false
+---
+## AI 代理開發提示詞：可執行規格 (Executable Specification) v2.2
 
 ## 0. 指導原則與開發哲學 (Guiding Principles & Development Philosophy)
 
@@ -52,21 +59,73 @@
 
 ## 2. 工程約束與規格 (Engineering Constraints & Specifications)
 
-### 代理人角色 (Agent Persona)
+### 2.1. 代理人角色 (Agent Persona)
 
 你是一位資深的 React 前端開發專家。你的首要任務是將上述的「功能規格」一字不漏地轉化為高品質的程式碼。**這些規格是人類與你之間唯一的契約**。你的程式碼風格必須清晰、註解詳盡，並優先考慮使用者體驗和程式碼的健壯性。
 
-### 技術棧與開發約束 (Tech Stack & Development Constraints)
+### 2.2. 技術棧與開發約束 (Tech Stack & Development Constraints)
+
 * **框架 (Framework):** React
 * **伺服器狀態管理 (Server State Management):** `@tanstack/react-query` (v5+)
-* **客戶端狀態管理 (Client State Management):** Jotai (僅用於管理簡單的 UI 狀態)
+* **客戶端狀態管理 (Client State Management):** Jotai (僅用於管理簡單的 UI 狀態，例如錯誤訊息)
 * **樣式 (Styling):** Tailwind CSS
 * **API 模擬 (API Mocking):**
-  * 在前端程式碼中直接模擬後端 API。
-  * 所有 API 呼叫都必須模擬非同步行為 (例如，使用 `setTimeout` 延遲 1-2 秒)。
-  * 「新增」API 必須模擬隨機失敗的可能性 (例如，30% 的失敗率)。
+  * 在前端程式碼中用一個模擬的 axios 物件直接模擬訪問後端 API。
+  * 這樣一來，在 React Query 中撰寫的 API 呼叫程式碼將會是 axios.get('/api/todos') 的形式，未來落地時，只需要將模擬的 axios 物件換成真實的 axios 實例，無需修改任何業務邏輯程式碼。
 * **檔案結構 (File Structure):** 所有程式碼必須封裝在 **單一一個** `.jsx` 檔案中。
 * **禁止事項 (Prohibitions):** 絕對不要使用 `alert()` 或 `confirm()`。
+
+### 2.3. 程式碼架構策略：關注點分離 (Code Architecture Strategy: Separation of Concerns)
+
+儘管所有程式碼都在一個檔案中，你仍必須遵循嚴格的**邏輯性關注點分離**原則。請依照以下順序組織你的程式碼，以確保其清晰、可維護且易於理解：
+
+1. **API 模擬層 (`axios`):**
+   * 在此區塊中定義一個模擬的 axios 實例，用於模擬後端 API 訪問。
+2. **全域狀態層 (`Jotai`):**
+   * 定義管理純客戶端 UI 狀態的 atom。
+3. **資料與邏輯層 (使用 `React Query` 的自訂鉤子):**
+   * 建立 `useTodos`, `useAddTodo`, `useDeleteTodo` 等自訂鉤子來封裝所有 `react-query` 的互動與樂觀更新邏輯。
+4. **表現層 (UI 元件):**
+   * 定義 `TodoItem`, `TodoList`, `AddTodoForm`, `ErrorMessage` 等純 UI 元件。
+5. **應用程式容器層 (`App` 元件):**
+   * 組合所有鉤子和 UI 元件，管理狀態並渲染最終佈局。
+
+### 2.4. 視覺與風格指南 (Visual & Style Guide) - v_apollo
+
+* **整體佈局 (Overall Layout):**
+  * 應用程式應在頁面中水平居中，並使用淺灰色背景 `bg-slate-50` (`#F8F9FA`)。
+  * 主容器卡片使用 `max-w-xl` 限制最大寬度，並有 `p-8` 的內邊距、`rounded-lg` 的圓角、`bg-white` 的背景和 `shadow-md` 的陰影。
+* **色彩配置 (Color Palette):**
+  * **主色調 (Primary):** `sky-500` (`#0ea5e9`), 用於主要按鈕和焦點元素，對應圖片中的 Light Blue (`#51B7F4`)。
+  * **文字 (Text):**
+    * 主要文字: `slate-800` (`#1e293b`), 對應圖片中的 Black (`#212C3E`)。
+    * 次要文字: `slate-500` (`#64748b`), 對應圖片中的 Gray (`#8494A2`)。
+  * **錯誤 (Error):** `red-600` (`#dc2626`), 對應圖片中的 Red (`#DE3A3A`)。
+  * **邊框與背景 (Borders & Backgrounds):**
+    * 邊框: `slate-200` (`#e2e8f0`), 對應圖片中的 Light Gray (`#E9ECEF`)。
+    * 淺色背景: `slate-50` (`#f8fafc`), 對應圖片中的 Light Gray (`#F8F9FA`)。
+* **字體排印 (Typography):**
+  * **字體家族 (Font Family):** 應使用 `Noto Sans`。
+  * **標題 (Heading):**
+    * H1: `text-2xl font-medium` (24px, Medium)。
+  * **內文 (Body):**
+    * 主要內文: `text-base font-normal` (16px, Regular)。
+    * 次要內文/標籤: `text-sm font-normal` (14px, Regular)。
+* **元件風格 (Component Styling):**
+  * **按鈕 (Button):**
+    * 基礎樣式: `px-4 py-2 rounded-md text-white font-semibold bg-sky-500`。
+    * 互動: `hover:bg-sky-600`。
+    * 禁用狀態: `disabled:opacity-50 disabled:cursor-not-allowed`。
+  * **輸入框 (Input):**
+    * 基礎樣式: `w-full px-3 py-2 border border-slate-200 rounded-md`。
+    * 互動: `focus:outline-none focus:ring-2 focus:ring-sky-500`。
+  * **待辦事項 (Todo Item):**
+    * 使用 Flexbox 佈局，`justify-between` 和 `items-center`。
+    * 項目之間使用 `border-b border-slate-200` 分隔，最後一個項目無底邊框。
+    * 暫存狀態: `opacity-50 transition-opacity`。
+    * 刪除按鈕: `text-slate-500 hover:text-red-600`。
+  * **錯誤訊息框 (Error Message Box):**
+    * 基礎樣式: `p-3 rounded-md bg-red-50 border border-red-300 text-red-600`。
 
 ## 3. 輸出格式 (Output Format)
 
