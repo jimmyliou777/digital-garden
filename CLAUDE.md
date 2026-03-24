@@ -1,0 +1,70 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
+## Project Overview
+
+This is **Jimmy's Blog**, a digital garden / personal knowledge base built with [Quartz v4](https://quartz.jzhao.xyz/) (v4.5.1). Content is authored in Obsidian-flavored Markdown and published as a static site to GitHub Pages.
+
+## Common Commands
+
+```bash
+# Dev server with hot reload (http://localhost:8080)
+npx quartz build --serve
+
+# Production build (outputs to ./public)
+npx quartz build
+
+# Type check & format check
+npm run check          # tsc --noEmit && prettier --check
+
+# Format code
+npm run format         # prettier --write
+
+# Run tests
+npm run test           # tsx --test
+```
+
+## Architecture
+
+### Two-layer structure
+
+1. **Quartz framework** (`quartz/`) — the SSG engine (TypeScript + Preact). You rarely need to modify this unless customizing the site's rendering pipeline.
+2. **Content** (`content/`) — Markdown files organized by topic (Obsidian vault). This is where blog posts and notes live.
+
+### Key config files
+
+| File | Purpose |
+|------|---------|
+| `quartz.config.ts` | Site metadata, plugin pipeline (transformers → filters → emitters), theme colors/fonts |
+| `quartz.layout.ts` | Page layout composition — which components appear in left/right/beforeBody/afterBody slots |
+
+### Plugin pipeline (`quartz/plugins/`)
+
+Content flows through three plugin stages defined in `quartz.config.ts`:
+- **Transformers** — parse and transform markdown (frontmatter, syntax highlighting, ObsidianFlavored MD, LaTeX/KaTeX, etc.)
+- **Filters** — exclude content (e.g. `RemoveDrafts`)
+- **Emitters** — generate output pages (content pages, folder pages, tag pages, sitemap, RSS, OG images)
+
+### Components (`quartz/components/`)
+
+Preact components rendered server-side. Each component is a `.tsx` file. Client-side scripts live in `quartz/components/scripts/`. Styles in `quartz/components/styles/`.
+
+### Content conventions
+
+- Files use Obsidian-flavored Markdown (wikilinks, callouts, embeds)
+- Frontmatter with `gray-matter` (YAML)
+- `ignorePatterns` in config: `["private", "templates", ".obsidian"]`
+- Date priority: frontmatter → git → filesystem
+
+### Deployment
+
+Push to `main` triggers GitHub Actions (`.github/workflows/deploy.yml`): build → deploy to GitHub Pages. CI uses `npm ci` (not pnpm), Node 22.
+
+## Tech Details
+
+- **Runtime**: Node >= 22, pnpm 10 (local dev), npm (CI)
+- **Language**: TypeScript (ESM, `"type": "module"`)
+- **UI**: Preact (not React) for components
+- **Build**: esbuild (via Quartz CLI)
+- **Styling**: SCSS (`quartz/styles/`)
