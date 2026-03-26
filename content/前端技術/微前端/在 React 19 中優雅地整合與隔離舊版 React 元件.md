@@ -1,26 +1,29 @@
 ---
 title: 在 React 19 中優雅地整合與隔離舊版 React 元件
+shortTitle: React 19 整合舊版元件
 description: 在 React 19 中優雅地整合與隔離舊版 React 元件
 tags: [Lit, Web Components, React, 微前端]
 published: 2025-06-11
 draft: false
 ---
 
-## 摘要
+**TL;DR：** 透過 NPM 別名並存兩版 React，用 Lit Web Component 建立隔離邊界，再搭配 React.lazy 按需載入，解決 React 19 專案需要渲染 React 18 元件的版本衝突問題。初始載入零額外成本。
 
-在前端專案的生命週期中，我們經常面臨一個棘手的挑戰：主應用程式的技術棧已升級至最新版本（如 React 19），但仍需依賴某些尚未升級、僅支援舊版（如 React 18）的第三方或內部元件庫。直接整合會導致版本衝突，而等待元件庫升級則可能延誤專案時程。
-
-本文提出一個兼具**隔離性**、**相容性**與**效能**的架構方案。我們將在 React 19 專案中，利用 **Web Components** 技術動態建立一個「沙箱」環境，使其內部執行一個獨立的 React 18 執行環境，從而無縫渲染舊版元件。同時，我們將正面應對由此產生的**打包體積問題**，並透過**動態載入（Dynamic Loading）**策略將其對效能的衝擊降至最低。
-
-目標讀者：前端架構師、資深前端工程師。
-
-核心技術：React 19 & 18, Lit, Web Components, NPM Package Aliasing, React.lazy。
+> 目標讀者：前端架構師、資深前端工程師。核心技術：React 19 & 18, Lit, Web Components, NPM Package Aliasing, React.lazy。
 
 ---
 
 ## 核心策略：以 Web Component 為隔離邊界
 
 我們的核心策略是**避免直接依賴，建立隔離邊界**。我們不在 React 19 的程式碼中直接 `import` 任何 React 18 的元件，而是建立一個 Lit Web Component (`<lit-react18-wrapper>`) 作為中介層。
+
+```mermaid
+flowchart LR
+    A["⚛️ React 19 主應用"] -->|"HTML 屬性<br>DOM 事件"| B["🧱 Lit Web Component<br>隔離邊界"]
+    B -->|"NPM 別名<br>react-v18"| C["⚛️ React 18 元件"]
+    A -.->|"React.lazy"| D["📦 獨立 chunk<br>按需載入"]
+    D -.-> B
+```
 
 這個中介層的職責是：
 
@@ -40,9 +43,7 @@ draft: false
     
     在 React 19 專案根目錄下，執行以下指令，將 React 18 版本安裝並賦予別名。
     
-    Bash
-    
-    ```
+    ```bash
     # 將 react@18 安裝為 react-v18
     npm install react-v18@npm:react@18
     
@@ -57,9 +58,7 @@ draft: false
     這是我們隔離策略的核心。建立一個 Lit 元件，並在其中明確地從別名套件引入 React 18。
     
     **`lit-react18-wrapper.js`**
-    
-    JavaScript
-    
+
     ```javascript
     import { LitElement, html } from 'lit';
     
@@ -158,9 +157,7 @@ draft: false
     為了配合 React.lazy，我們需要一個模組來觸發 Web Component 的註冊 (customElements.define)。
     
     **`lazy-loader.js`**
-    
-    JavaScript
-    
+
     ```javascript
     // 此檔案的唯一作用就是執行一次 Web Component 的定義檔
     import './lit-react18-wrapper.js';
@@ -171,10 +168,8 @@ draft: false
     我們使用 @lit-labs/react 的 createComponent 來為 Web Component 建立一個符合人體工學的 React 介面。
     
     **`WrappedReact18Button.jsx`**
-    
-    JavaScript
-    
-    ```
+
+    ```jsx
     import React from 'react';
     import { createComponent } from '@lit-labs/react';
     
@@ -195,10 +190,8 @@ draft: false
     在主應用中，使用 React.lazy 和 <Suspense> 來消費這個元件。
     
     **`App.jsx` (React 19)**
-    
-    JavaScript
-    
-    ```javascript
+
+    ```jsx
     import React, { useState, Suspense } from 'react';
     
     // 透過 React.lazy 動態載入，打包工具會將其分離成獨立 chunk

@@ -1,10 +1,20 @@
 ---
 title: 使用 Lit 開發 Web Components 並整合至 React 專案
+shortTitle: Lit Web Components 整合 React
 description: 詳細介紹如何使用 Lit 庫開發 Web Components，並通過 Vite 打包後整合至 React 專案中
 tags: [Lit, Web Components, React, 微前端]
 published: 2025-06-01
 draft: false
 ---
+
+**TL;DR：** 使用 Lit 開發 Web Components，透過 Vite 打包為 UMD/IIFE 格式，再用 `@lit/react` 的 `createComponent` 包裝為 React 元件。支援現代 React 19 和舊版 React 14 專案，實現「寫一次，跨框架使用」。
+
+```mermaid
+flowchart LR
+    A["🔨 Lit 開發<br>Web Component"] --> B["📦 Vite 打包<br>UMD / IIFE"]
+    B --> C["⚛️ 現代 React<br>@lit/react 包裝"]
+    B --> D["📜 舊版 React<br>script 標籤引入"]
+```
 
 ## 簡介
 
