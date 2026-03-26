@@ -77,6 +77,16 @@ Quartz 內建 Mermaid 支援（透過 `ObsidianFlavoredMarkdown` plugin，預設
 - 中文節點文字可正常渲染
 - 圖表會自動同步 light/dark theme
 
+### Excalidraw 圖表
+
+支援 Excalidraw 手繪風格圖表，透過 Obsidian Excalidraw plugin 的 auto-export SVG 功能整合：
+
+- Obsidian 端：Excalidraw plugin 設定開啟「Auto-export SVG」和「Export both light and dark」
+- 匯出產生 `.excalidraw.light.svg` + `.excalidraw.dark.svg`，與 `.excalidraw.md` 同層
+- 文章中使用 `![[diagram.excalidraw.light.svg]]` 嵌入
+- `RemoveExcalidraw` filter plugin 會過濾 `.excalidraw.md`，防止它們被當頁面處理
+- Dark mode 透過 CSS `filter: invert(1) hue-rotate(180deg)` 自動反色
+
 ### Deployment
 
 Push to `main` triggers GitHub Actions (`.github/workflows/deploy.yml`): build → deploy to GitHub Pages. CI uses `npm ci` (not pnpm), Node 22.

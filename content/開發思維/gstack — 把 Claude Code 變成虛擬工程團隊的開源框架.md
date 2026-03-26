@@ -23,15 +23,7 @@ Garry Tan 不是純粹的 AI 工具開發者——他是 Y Combinator 的現任 
 
 gstack 不只是一堆零散的工具。它的核心設計是一條完整的 sprint pipeline：
 
-```mermaid
-flowchart LR
-    A["💡 發想"] -->|"/office-hours"| B["📋 規劃"]
-    B -->|"/plan-*-review"| C["🔨 開發"]
-    C -->|"/review"| D["🔍 審查"]
-    D -->|"/qa"| E["🧪 測試"]
-    E -->|"/ship"| F["🚀 上線"]
-    F -->|"/retro"| A
-```
+![[gstack-sprint-pipeline.excalidraw.light.svg]]
 
 每個 skill 的輸出會被下游 skill 讀取。例如：
 
@@ -122,14 +114,7 @@ Browse System 是 gstack 技術含量最高的部分——一個 persistent head
 
 每次 command 都冷啟動 Chromium 要 3-5 秒，對 agent 的迭代速度來說完全不可接受。gstack 的解法是一個長駐的 HTTP server：
 
-```mermaid
-flowchart LR
-    A["Claude Code"] --> B["CLI 工具"]
-    B -->|"首次：冷啟動 ~3s"| C["HTTP Server<br>（常駐）"]
-    C --> D["Chromium 瀏覽器"]
-    B -.->|"之後：直接連線 ~100ms"| C
-    C -->|"閒置 30 分鐘"| E(("自動關閉"))
-```
+![[gstack-browse-daemon.excalidraw.light.svg]]
 
 - **首次呼叫**：CLI 啟動 server + Chromium（~3 秒），server 寫入 state file（`.gstack/browse.json`）記錄 PID、port、auth token
 - **後續呼叫**：CLI 讀 state file，送 HTTP POST，拿回純文字。**~100-200ms per command**
@@ -147,14 +132,7 @@ HTTP protocol 極度簡單——`GET /health` 檢查存活（不需 auth），`P
 
 **Pass 2**：走訪每個節點，依序分配 `@e1, @e2, @e3...` ref，每個 ref 對應一個 Playwright Locator：
 
-```mermaid
-flowchart TD
-    A["📸 擷取無障礙樹"] --> B["第一輪：統計每個元素出現幾次"]
-    B --> C["第二輪：分配編號 @e1, @e2, @e3..."]
-    C --> D["AI 看到清單"]
-    D --> E["AI 下指令：click @e2"]
-    E --> F["透過編號找到元素 → 執行點擊"]
-```
+![[gstack-ref-system.excalidraw.light.svg]]
 
 ```typescript
 // 內部大致邏輯
@@ -215,15 +193,7 @@ CLI 的 `ensureServer()` 有完整的 race condition 防護：用 `O_CREAT | O_E
 
 ### 生成流程
 
-```mermaid
-flowchart LR
-    A[".tmpl 模板"] --> B["生成腳本"]
-    C["TypeScript 原始碼"] --> B
-    B -->|"替換佔位符<br>注入共用設定"| D["SKILL.md"]
-    D --> E["Claude Code 版本"]
-    D --> F["Codex 版本"]
-    G["CI 檢查：<br>模板有改但沒重新生成？<br>→ 擋住"] -.-> D
-```
+![[gstack-skill-template.excalidraw.light.svg]]
 
 `scripts/discover-skills.ts` 掃描 repo 根目錄的子資料夾，找到所有 `SKILL.md.tmpl`。每個 skill 住在自己的頂層目錄（`review/`、`qa/`、`office-hours/`）。
 

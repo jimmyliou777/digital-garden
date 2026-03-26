@@ -1,3 +1,6 @@
 @use "./base.scss";
 
-// put your custom CSS here!
+// Excalidraw SVG: invert colors in dark mode
+:root[saved-theme="dark"] img[src*=".excalidraw"][src$=".svg"] {
+  filter: invert(1) hue-rotate(180deg);
+}
