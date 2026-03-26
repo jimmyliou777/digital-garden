@@ -24,18 +24,24 @@ draft: false
 
 我想要的是：**可自動化的環節交給 AI，人只負責決定「寫什麼」和「觀點對不對」**。
 
-## 產線全貌
+## 產線全貌與協作模型
+
+先看整條產線的六個階段：
 
 ```mermaid
 flowchart LR
-    A["主題發想<br>👤 human"] --> B["結構規劃<br>technical-blog-writing"]
+    A["主題發想<br>human"] --> B["結構規劃<br>technical-blog-writing"]
     B --> C["內容撰寫<br>Claude Code +<br>obsidian-markdown"]
     C --> D["圖表生成<br>excalidraw-diagram<br>/ Mermaid"]
     D --> E["組裝寫入<br>obsidian-cli"]
     E --> F["建置部署<br>Quartz +<br>GitHub Actions"]
 ```
 
-六個階段，四個用到 Claude Code Skills，兩個是傳統 CI/CD。Claude Code 扮演的角色是 **orchestrator**——根據當前階段自動選擇合適的 Skill，但每個階段的產出都需要人審核。
+四個階段用到 Claude Code Skills，兩個是傳統 CI/CD。但這不是一條線性流水線——中間有 **review loop**。以下是實際互動的完整過程：
+
+![[ai-blog-pipeline-interaction.excalidraw.light.svg]]
+
+關鍵在於 Skills 之間沒有技術層面的 API 串接。協作靠的是 Claude Code 的 **context window**——它知道當前在寫什麼文章、用什麼框架、需要什麼格式，根據上下文選擇合適的 Skill。這和 [[gstack — 把 Claude Code 變成虛擬工程團隊的開源框架|gstack]] 的 sprint pipeline 是同一個思路：**結構化流程比即興操作更可靠**。
 
 ## 每個環節拆解
 
@@ -53,7 +59,7 @@ flowchart LR
 - [[用 Claude Code Skills 組裝一條 Staff Engineer 級的技術債審查 Pipeline|技術債審查 Pipeline]] 定位為 **Architecture/Workflow**——描述一條可重複的流程
 - [[在 Quartz Blog 中使用 Mermaid 與 Excalidraw 圖表|Mermaid 與 Excalidraw 圖表]] 定位為 **Tutorial**——step-by-step 設定教學
 
-框架最大的好處是 **風格一致性**——你看上面三篇，都是 TL;DR 開頭、blockquote 前提聲明、問題先行的結構。這不是因為我每次都記得，而是 Skill 在每次寫作時都會提醒。
+框架最大的好處是 **風格一致性**——上面三篇都是 TL;DR 開頭、blockquote 前提聲明、問題先行的結構。這不是因為我每次都記得，而是 Skill 在每次寫作時都會提醒。
 
 ### 內容撰寫 — Claude Code + obsidian-markdown skill
 
@@ -64,8 +70,6 @@ Quartz 吃的是 Obsidian-flavored Markdown，和標準 Markdown 有幾個關鍵
 - **Frontmatter**：Quartz 需要 `title`、`description`、`tags`、`published`、`draft` 五個欄位
 
 `obsidian-markdown` Skill 確保 Claude Code 產出的格式正確——不會用標準 Markdown 的 link 語法，不會漏掉 frontmatter 必填欄位。
-
-**踩坑經驗**：多個 Skill 組合產出內容時，frontmatter 組裝必須是獨立步驟。第一次嘗試時，`technical-blog-writing` 產出了文章內容，但沒帶 Quartz 需要的 frontmatter 格式，直到 build 失敗才發現。現在的流程是：先產出內容，最後獨立組裝 frontmatter。
 
 ### 圖表生成 — excalidraw-diagram skill + Mermaid
 
@@ -80,49 +84,21 @@ Quartz 吃的是 Obsidian-flavored Markdown，和標準 Markdown 有幾個關鍵
 
 詳細的比較和設定方式可以參考 [[在 Quartz Blog 中使用 Mermaid 與 Excalidraw 圖表|Mermaid 與 Excalidraw 圖表]] 這篇。
 
-`excalidraw-diagram` 不是內建的——我是用 `find-skills` 搜尋到再安裝的：
-
-```mermaid
-flowchart TD
-    A["需要新能力<br>（例如畫 Excalidraw）"] --> B["find-skills<br>搜尋 skills.sh 生態"]
-    B --> C{"找到合適 Skill?"}
-    C -->|Yes| D["npx skills add<br>全域安裝"]
-    C -->|No| E["自製 SKILL.md<br>或調整需求"]
-    D --> F["所有 Claude Code session<br>立即可用"]
-```
-
-安裝指令：
+`excalidraw-diagram` 不是內建的——我是用 `find-skills` 在 [skills.sh](https://skills.sh) 生態中搜尋到再安裝的：
 
 ```bash
 npx skills add axtonliu/axton-obsidian-visual-skills@excalidraw-diagram -g -y
 ```
 
+安裝後所有 Claude Code session 立即可用。如果搜不到合適的 Skill，也可以自製 `SKILL.md`——本質上就是一個定義角色、方法論、輸出格式的結構化 prompt。
+
 實際案例：gstack 分析文原本有 4 張 Mermaid 圖表。我後來決定改用 Excalidraw 手繪風格，讓架構圖更有層次感。流程是——Claude Code 讀取 Mermaid 語法理解圖表語意，用 `excalidraw-diagram` Skill 重新生成 Excalidraw 版本，再用 Obsidian Excalidraw plugin 的 auto-export 產生 SVG。這不是格式轉換，而是**理解語意後重新設計佈局**。
 
 ### 組裝寫入與部署 — obsidian-cli + Quartz + GitHub Actions
 
-最後一步是把產出寫入 vault 並部署。
+`obsidian-cli` 讓 Claude Code 直接操作 Obsidian vault——建立文章、搜尋既有內容避免重複、批次管理 frontmatter 欄位。在工作流中它解決的核心問題是：**不需要手動在 Obsidian UI 和 terminal 之間切換**，整條產線可以在 Claude Code 的對話中一路完成到寫入 vault。
 
-**obsidian-cli** 讓 Claude Code 直接操作 Obsidian vault：
-
-```bash
-# 建立文章
-obsidian create name="文章標題" content="..." silent
-
-# 搜尋既有內容避免重複
-obsidian search query="Excalidraw" limit=5
-
-# 管理 frontmatter
-obsidian property:set name="draft" value="false" file="文章標題"
-```
-
-寫入後，部署流程是傳統 CI/CD，不需要 AI 介入：
-
-```bash
-git push main  # → GitHub Actions → Quartz build → GitHub Pages
-```
-
-Claude Code 在這個環節能幫的是 **debug 建置錯誤**——例如 frontmatter 格式不對、wikilink 指向不存在的檔案、Mermaid 語法錯誤導致 build fail。
+寫入後，`git push main` 觸發 GitHub Actions 自動建置部署到 GitHub Pages。這個環節完全不需要 AI——但 Claude Code 可以幫忙 debug 建置錯誤，例如 frontmatter 格式不對或 Mermaid 語法錯誤導致 build fail。
 
 ## 實際產出案例
 
@@ -134,58 +110,32 @@ Claude Code 在這個環節能幫的是 **debug 建置錯誤**——例如 front
 | [[用 Claude Code Skills 組裝一條 Staff Engineer 級的技術債審查 Pipeline\|技術債審查 Pipeline]] | Workflow | technical-blog-writing, obsidian-markdown | 3 個 Skill 組合掃描實測 |
 | [[在 Quartz Blog 中使用 Mermaid 與 Excalidraw 圖表\|Mermaid 與 Excalidraw 圖表]] | Tutorial | technical-blog-writing, obsidian-markdown, excalidraw-diagram | Excalidraw demo 圖表生成 |
 
-需要強調的是：**AI 處理的是周邊工作（結構、格式、圖表、部署），不是核心觀點**。每篇文章的主題選擇、論述角度、技術判斷都是人決定的。AI 不會幫你決定 gstack 的哪個設計值得深入分析，也不會幫你判斷利息模型的估算合不合理。
-
-## 人機協作模型
-
-```mermaid
-flowchart TD
-    H["👤 人<br>決定主題、審核內容、最終判斷"] --> CC["Claude Code<br>orchestrate Skills"]
-    CC --> S1["technical-blog-writing<br>結構與風格"]
-    CC --> S2["obsidian-markdown<br>格式規範"]
-    CC --> S3["excalidraw-diagram<br>圖表生成"]
-    CC --> S4["obsidian-cli<br>vault 操作"]
-    CC --> S5["find-skills<br>能力擴充"]
-    S1 & S2 & S3 & S4 --> O["Markdown 文章"]
-    O --> H
-```
-
-Skills 之間沒有技術層面的 API 串接。協作靠的是 Claude Code 的 **context window**——它知道當前在寫什麼文章、用什麼框架、需要什麼格式，然後根據上下文選擇合適的 Skill。
-
-這和 [[gstack — 把 Claude Code 變成虛擬工程團隊的開源框架|gstack]] 的 sprint pipeline 是同一個思路：**結構化流程比即興操作更可靠**。差別在於 gstack 用程式碼定義流程，這裡用 Skills 組合定義流程。
-
-## 踩坑紀錄
+## 踩坑紀錄與限制
 
 ### Frontmatter 遺漏
 
-多 Skill 組合產出內容時，「組裝最終檔案」必須是獨立步驟。`technical-blog-writing` 不知道 Quartz 需要哪些 frontmatter 欄位，`obsidian-markdown` 知道語法但不知道你的 blog 規範。需要在 CLAUDE.md 中明確定義 frontmatter 規範，讓 Claude Code 在最後一步統一處理。
+多 Skill 組合產出內容時，「組裝最終檔案」必須是獨立步驟。`technical-blog-writing` 不知道 Quartz 需要哪些 frontmatter 欄位，`obsidian-markdown` 知道語法但不知道你的 blog 規範。**解法**：在專案 CLAUDE.md 中明確定義 frontmatter 規範，讓 Claude Code 在最後一步統一處理。
 
 ### Excalidraw 命名規則
 
-`.excalidraw.md` 不是 `.md`——搞錯副檔名會導致 Obsidian 的 auto-export SVG 和 Quartz 的 `RemoveExcalidraw` filter 都不生效。第一次生成時，Skill 輸出的是 `.md`，需要手動改名。這種命名慣例應該寫進專案的 CLAUDE.md，讓 Claude Code 自動處理。
+`.excalidraw.md` 不是 `.md`——搞錯副檔名會導致 Obsidian 的 auto-export SVG 和 Quartz 的 `RemoveExcalidraw` filter 都不生效。第一次生成時，Skill 輸出的是 `.md`，需要手動改名。同樣的解法——把命名慣例寫進 CLAUDE.md。
 
 ### Skill 品質參差不齊
 
-`find-skills` 搜到的 Skill 不是裝了就能用。安裝前建議：
-
-1. 先到 [skills.sh](https://skills.sh) 看安全評分
-2. Review `SKILL.md` 的內容——品質好的 Skill 會有清晰的方法論和約束條件
-3. 小範圍測試再正式使用
+`find-skills` 搜到的 Skill 不是裝了就能用。安裝前建議先到 [skills.sh](https://skills.sh) 看安全評分，review `SKILL.md` 的內容（品質好的 Skill 會有清晰的方法論和約束條件），小範圍測試再正式使用。
 
 ### AI 產出需要校準
 
-- `excalidraw-diagram` 生成的佈局通常需要在 Obsidian 編輯器中微調位置
-- 文章的技術判斷和觀點不能交給 AI——它可以幫你組織資訊，但不會幫你決定什麼值得寫
-- Mermaid 語法偶爾會有節點文字換行問題（要用 `<br>` 不是 `\n`）
+`excalidraw-diagram` 生成的佈局通常需要在 Obsidian 中微調。Mermaid 語法偶爾有換行問題（要用 `<br>` 不是 `\n`）。這些都是小問題，但提醒你產線的產出是「草稿」不是「成品」——**最終品質仍然取決於人的審核和調整**。
 
-## 這條產線的限制
+### 產線本身的限制
 
-- **觀點型文章效益有限**——像 [[別再寫「你是專家」— 研究告訴我們 Prompt 角色設定的真相|Prompt 角色設定的真相]] 這類文章，核心是論述邏輯和研究解讀，AI 在周邊工作上能幫的比例較低
+- **觀點型文章效益有限**——像 [[別再寫「你是專家」— 研究告訴我們 Prompt 角色設定的真相|Prompt 角色設定的真相]] 這類文章，核心是論述邏輯和研究解讀，產線能幫的比例較低
 - **Skill 生態還很早期**——很多需求找不到現成 Skill，需要自己寫或 workaround
-- **重度依賴 Claude Code 生態**——這套 Skills 只在 Claude Code 中可用，換 Cursor 或 Copilot 就要重新建立
+- **重度依賴 Claude Code 生態**——這套 Skills 只在 Claude Code 中可用，換其他 AI coding tool 就要重新建立
 - **API 成本不低**——每篇文章涉及多輪對話和多 Skill 調用，token 消耗比純文字問答高不少
 
-儘管有這些限制，對於需要頻繁產出技術文章的人來說，這條產線把重複性工作的成本降得很低。更重要的是，它讓你 **把注意力留在最有價值的事情上——想清楚要對讀者說什麼**。
+儘管如此，這條產線把重複性工作的成本降得很低。更重要的是，它讓你把注意力留在最有價值的事情上——想清楚要對讀者說什麼。
 
 ## 延伸閱讀
 
