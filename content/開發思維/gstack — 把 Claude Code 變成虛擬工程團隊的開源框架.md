@@ -1,12 +1,11 @@
 ---
 title: gstack — 把 Claude Code 變成虛擬工程團隊的開源框架
+shortTitle: gstack 虛擬工程團隊框架
 description: 深入分析 Y Combinator CEO Garry Tan 開源的 gstack 框架，從 Browse System daemon 架構、SKILL.md 模板引擎到 sprint pipeline 設計，拆解它如何將 Claude Code 打造成結構化的虛擬工程團隊
 tags: [AI, Claude Code, Developer Tools, Open Source, Architecture]
 published: 2026-03-24
 draft: false
 ---
-
-# gstack — 把 Claude Code 變成虛擬工程團隊的開源框架
 
 **TL;DR：** gstack 是 Y Combinator CEO Garry Tan 開源的 Claude Code skill 集合，透過 28 個 slash command 將單一 AI agent 拆分成 CEO、工程主管、設計師、QA、SRE 等角色，實現結構化的 sprint 流程。技術上最有意思的是它的 **persistent Chromium daemon**（用 accessibility tree 建立 ref system 讓 AI 操作真實瀏覽器）和 **SKILL.md 模板引擎**（從 `.tmpl` 生成跨 agent 相容的結構化 prompt）。MIT 授權，30 秒安裝。
 
@@ -24,8 +23,14 @@ Garry Tan 不是純粹的 AI 工具開發者——他是 Y Combinator 的現任 
 
 gstack 不只是一堆零散的工具。它的核心設計是一條完整的 sprint pipeline：
 
-```
-Think → Plan → Build → Review → Test → Ship → Reflect
+```mermaid
+flowchart LR
+    A["💡 發想"] -->|"/office-hours"| B["📋 規劃"]
+    B -->|"/plan-*-review"| C["🔨 開發"]
+    C -->|"/review"| D["🔍 審查"]
+    D -->|"/qa"| E["🧪 測試"]
+    E -->|"/ship"| F["🚀 上線"]
+    F -->|"/retro"| A
 ```
 
 每個 skill 的輸出會被下游 skill 讀取。例如：
@@ -117,8 +122,13 @@ Browse System 是 gstack 技術含量最高的部分——一個 persistent head
 
 每次 command 都冷啟動 Chromium 要 3-5 秒，對 agent 的迭代速度來說完全不可接受。gstack 的解法是一個長駐的 HTTP server：
 
-```
-Claude Code  →  CLI binary (compiled Bun, ~58MB)  →  HTTP server (Bun.serve)  →  Chromium (Playwright)
+```mermaid
+flowchart LR
+    A["Claude Code"] --> B["CLI 工具"]
+    B -->|"首次：冷啟動 ~3s"| C["HTTP Server<br>（常駐）"]
+    C --> D["Chromium 瀏覽器"]
+    B -.->|"之後：直接連線 ~100ms"| C
+    C -->|"閒置 30 分鐘"| E(("自動關閉"))
 ```
 
 - **首次呼叫**：CLI 啟動 server + Chromium（~3 秒），server 寫入 state file（`.gstack/browse.json`）記錄 PID、port、auth token
@@ -136,6 +146,15 @@ HTTP protocol 極度簡單——`GET /health` 檢查存活（不需 auth），`P
 **Pass 1**：呼叫 `page.accessibility.snapshot()` 取得 ARIA tree，計算所有 `role + name` 組合的出現次數，決定哪些需要 `nth()` 消歧義。
 
 **Pass 2**：走訪每個節點，依序分配 `@e1, @e2, @e3...` ref，每個 ref 對應一個 Playwright Locator：
+
+```mermaid
+flowchart TD
+    A["📸 擷取無障礙樹"] --> B["第一輪：統計每個元素出現幾次"]
+    B --> C["第二輪：分配編號 @e1, @e2, @e3..."]
+    C --> D["AI 看到清單"]
+    D --> E["AI 下指令：click @e2"]
+    E --> F["透過編號找到元素 → 執行點擊"]
+```
 
 ```typescript
 // 內部大致邏輯
@@ -196,8 +215,14 @@ CLI 的 `ensureServer()` 有完整的 race condition 防護：用 `O_CREAT | O_E
 
 ### 生成流程
 
-```
-SKILL.md.tmpl → gen-skill-docs.ts → placeholder resolution → header injection → SKILL.md
+```mermaid
+flowchart LR
+    A[".tmpl 模板"] --> B["生成腳本"]
+    C["TypeScript 原始碼"] --> B
+    B -->|"替換佔位符<br>注入共用設定"| D["SKILL.md"]
+    D --> E["Claude Code 版本"]
+    D --> F["Codex 版本"]
+    G["CI 檢查：<br>模板有改但沒重新生成？<br>→ 擋住"] -.-> D
 ```
 
 `scripts/discover-skills.ts` 掃描 repo 根目錄的子資料夾，找到所有 `SKILL.md.tmpl`。每個 skill 住在自己的頂層目錄（`review/`、`qa/`、`office-hours/`）。

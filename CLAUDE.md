@@ -37,7 +37,7 @@ npm run test           # tsx --test
 | File | Purpose |
 |------|---------|
 | `quartz.config.ts` | Site metadata, plugin pipeline (transformers → filters → emitters), theme colors/fonts |
-| `quartz.layout.ts` | Page layout composition — which components appear in left/right/beforeBody/afterBody slots |
+| `quartz.layout.ts` | Page layout composition — which components appear in left/right/beforeBody/afterBody slots。Explorer 元件設有 `mapFn` 讀取 `shortTitle` 控制側邊欄顯示名稱 |
 
 ### Plugin pipeline (`quartz/plugins/`)
 
@@ -56,6 +56,26 @@ Preact components rendered server-side. Each component is a `.tsx` file. Client-
 - Frontmatter with `gray-matter` (YAML)
 - `ignorePatterns` in config: `["private", "templates", ".obsidian"]`
 - Date priority: frontmatter → git → filesystem
+- **不要在 Markdown 內加 `# 標題`**（H1）——Quartz 會自動從 frontmatter `title` 渲染頁面標題，手動加 H1 會導致標題重複顯示
+
+### Frontmatter 欄位
+
+| 欄位 | 必填 | 說明 |
+|------|------|------|
+| `title` | ✅ | 頁面標題（用於頁面頂部、breadcrumb、SEO） |
+| `description` | ✅ | 文章摘要 |
+| `tags` | ✅ | 標籤陣列，如 `[AI, Claude Code]` |
+| `published` | ✅ | 發布日期 `YYYY-MM-DD` |
+| `draft` | ✅ | `true` 則不會被建置輸出 |
+| `shortTitle` | 選填 | Explorer 側邊欄顯示的短標題。未設定時自動 fallback：有 ` — ` 取前半段，超過 20 字截斷加 `...` |
+
+### Mermaid 圖表
+
+Quartz 內建 Mermaid 支援（透過 `ObsidianFlavoredMarkdown` plugin，預設啟用）。撰寫注意事項：
+
+- 節點內換行使用 `<br>`，**不要用 `\n`**（會被渲染為字面文字）
+- 中文節點文字可正常渲染
+- 圖表會自動同步 light/dark theme
 
 ### Deployment
 

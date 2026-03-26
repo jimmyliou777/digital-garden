@@ -1,12 +1,11 @@
 ---
 title: 別再寫「你是專家」— 研究告訴我們 Prompt 角色設定的真相
+shortTitle: Prompt 角色設定的真相
 description: USC 研究發現「你是專家」類 prompt 角色設定會降低程式碼與數學任務的準確率。交叉驗證多篇研究，整理出開發者該如何調整 prompt 策略
 tags: [AI, Prompt Engineering, LLM, Developer Tools]
 published: 2026-03-25
 draft: false
 ---
-
-# 別再寫「你是專家」— 研究告訴我們 Prompt 角色設定的真相
 
 **TL;DR：** 南加州大學研究發現，在 prompt 開頭加「你是專家級程式設計師」這類角色設定，會降低 LLM 在程式碼與數學任務上的準確率（MMLU 從 71.6% 降到 68.0%）。多篇研究交叉驗證了同樣結論：**泛用的角色修飾對準確性任務無效甚至有害，具體的任務約束才是有效的 prompt 策略。**
 

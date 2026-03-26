@@ -38,7 +38,18 @@ export const defaultContentPageLayout: PageLayout = {
         { Component: Component.ReaderMode() },
       ],
     }),
-    Component.Explorer(),
+    Component.Explorer({
+      mapFn: (node) => {
+        if (node.isFolder) return
+        if (node.data?.shortTitle) {
+          node.displayName = node.data.shortTitle
+        } else if (node.displayName.includes(" — ")) {
+          node.displayName = node.displayName.split(" — ")[0].trim()
+        } else if (node.displayName.length > 20) {
+          node.displayName = node.displayName.slice(0, 20) + "..."
+        }
+      },
+    }),
   ],
   right: [
     Component.Graph(),
@@ -62,7 +73,18 @@ export const defaultListPageLayout: PageLayout = {
         { Component: Component.Darkmode() },
       ],
     }),
-    Component.Explorer(),
+    Component.Explorer({
+      mapFn: (node) => {
+        if (node.isFolder) return
+        if (node.data?.shortTitle) {
+          node.displayName = node.data.shortTitle
+        } else if (node.displayName.includes(" — ")) {
+          node.displayName = node.displayName.split(" — ")[0].trim()
+        } else if (node.displayName.length > 20) {
+          node.displayName = node.displayName.slice(0, 20) + "..."
+        }
+      },
+    }),
   ],
   right: [],
 }
