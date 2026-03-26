@@ -39,6 +39,9 @@ export const defaultContentPageLayout: PageLayout = {
       ],
     }),
     Component.Explorer({
+      filterFn: (node) => {
+        return !node.displayName.includes(".excalidraw")
+      },
       mapFn: (node) => {
         if (node.isFolder) return
         if (node.data?.shortTitle) {
@@ -74,6 +77,9 @@ export const defaultListPageLayout: PageLayout = {
       ],
     }),
     Component.Explorer({
+      filterFn: (node) => {
+        return !node.displayName.includes(".excalidraw")
+      },
       mapFn: (node) => {
         if (node.isFolder) return
         if (node.data?.shortTitle) {

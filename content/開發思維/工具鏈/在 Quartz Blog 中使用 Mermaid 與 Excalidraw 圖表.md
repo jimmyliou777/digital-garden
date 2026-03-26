@@ -207,7 +207,7 @@ npx skills add axtonliu/axton-obsidian-visual-skills@excalidraw-diagram -g -y
 
 ## 實際工作流：從 Mermaid 到 Excalidraw
 
-我在寫 [gstack 分析文](gstack%20—%20把%20Claude%20Code%20變成虛擬工程團隊的開源框架.md) 時，原本用 Mermaid 畫了 4 張圖表。後來決定改用 Excalidraw，流程是這樣的：
+我在寫 [[gstack — 把 Claude Code 變成虛擬工程團隊的開源框架|gstack 分析文]] 時，原本用 Mermaid 畫了 4 張圖表。後來決定改用 Excalidraw，流程是這樣的：
 
 1. **讀取** Mermaid code block，理解圖表要表達的資訊
 2. **用 excalidraw-diagram skill 重新生成** Excalidraw 版本
