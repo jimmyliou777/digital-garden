@@ -76,14 +76,6 @@ flowchart TD
     end
 
     S5 --> DONE["✅ 閉環完成"]
-
-    style HD1 fill:#78350f,stroke:#f59e0b,color:#fef3c7
-    style HD2 fill:#78350f,stroke:#f59e0b,color:#fef3c7
-    style S1 fill:#1e293b,stroke:#8b5cf6,color:#e2e8f0
-    style S2 fill:#1e293b,stroke:#8b5cf6,color:#e2e8f0
-    style S3 fill:#1e293b,stroke:#3b82f6,color:#e2e8f0
-    style S4 fill:#1e293b,stroke:#3b82f6,color:#e2e8f0
-    style S5 fill:#1e293b,stroke:#22c55e,color:#e2e8f0
 ```
 
 注意兩個黃色的**人類決策點**——閉環不是「AI 全自動」，而是「AI 做完分析，人類做關鍵決策，AI 繼續執行」。
@@ -548,9 +540,6 @@ flowchart LR
     E -->|"failing tests<br/>→ 測試檔案"| F["Impl Agent<br/>（讀 tests）"]
     F -->|"passing code<br/>→ git commit"| G["驗證 Pipeline"]
     G -->|"all pass<br/>→ 狀態更新"| H["Jira Done"]
-
-    style A fill:#78350f,stroke:#f59e0b,color:#fef3c7
-    style H fill:#14532d,stroke:#22c55e,color:#bbf7d0
 ```
 
 每個箭頭代表一次自動的 context 傳遞。人類只在兩個點介入：explore 後確認 scope、propose 後 review 設計。其餘全部由系統驅動。
