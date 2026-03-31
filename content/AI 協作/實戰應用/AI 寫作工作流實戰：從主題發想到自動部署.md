@@ -1,6 +1,6 @@
 ---
-title: 用 Claude Code 組裝一條 AI 驅動的技術 Blog 產線
-shortTitle: AI Blog 產線
+title: AI 寫作工作流實戰：從主題發想到自動部署
+shortTitle: AI 寫作工作流實戰
 description: 實戰拆解如何用 Claude Code + Obsidian CLI + 社群 Skills 組成完整的技術文章產線——從結構規劃、圖表生成到發布上線，附真實產出文章作為案例
 tags: [Claude Code, Developer Tools, Obsidian, Quartz, AI]
 published: 2026-03-26
@@ -41,7 +41,7 @@ flowchart LR
 
 ![[ai-blog-pipeline-interaction.excalidraw.light.svg]]
 
-關鍵在於 Skills 之間沒有技術層面的 API 串接。協作靠的是 Claude Code 的 **context window**——它知道當前在寫什麼文章、用什麼框架、需要什麼格式，根據上下文選擇合適的 Skill。這和 [[gstack — 把 Claude Code 變成虛擬工程團隊的開源框架|gstack]] 的 sprint pipeline 是同一個思路：**結構化流程比即興操作更可靠**。
+關鍵在於 Skills 之間沒有技術層面的 API 串接。協作靠的是 Claude Code 的 **context window**——它知道當前在寫什麼文章、用什麼框架、需要什麼格式，根據上下文自動選擇合適的 Skill。**結構化流程比即興操作更可靠**——這也是為什麼把每個階段拆成獨立 Skill，而不是一個大 prompt 做完所有事。
 
 ## 每個環節拆解
 
@@ -53,13 +53,19 @@ flowchart LR
 - **Developer voice guidelines**——直接、承認 trade-off、用具體數字、不寫行銷語言
 - **常見錯誤清單**——沒有 TL;DR、broken code examples、buried lede
 
-實際操作時，我會先跟 Claude Code 描述文章主題，它會根據 Skill 的框架建議文章類型和章節結構。例如：
+實際操作時，我會先跟 Claude Code 描述文章主題和目標讀者，它會根據 Skill 的框架建議文章類型和章節結構：
+
+> 我想寫一篇分析 gstack 這個開源框架的文章，目標讀者是已經用過 Claude Code 的工程師，重點拆解它的內部機制和設計取捨。
+
+Claude Code 會回應：建議定位為 **Deep Dive** 類型，推薦的段落結構是「TL;DR → 前提聲明 → 問題 → 核心機制拆解 → 實測 → 限制與 trade-offs」。
+
+以這條產線產出的三篇文章為例：
 
 - [[gstack — 把 Claude Code 變成虛擬工程團隊的開源框架|gstack 分析文]] 定位為 **Deep Dive**——拆解框架的內部機制
-- [[用 Claude Code Skills 組裝一條 Staff Engineer 級的技術債審查 Pipeline|技術債審查 Pipeline]] 定位為 **Architecture/Workflow**——描述一條可重複的流程
+- [[AI 審查工作流實戰：從掃描分級到商業報告|技術債審查 Pipeline]] 定位為 **Architecture/Workflow**——描述一條可重複的流程
 - [[在 Quartz Blog 中使用 Mermaid 與 Excalidraw 圖表|Mermaid 與 Excalidraw 圖表]] 定位為 **Tutorial**——step-by-step 設定教學
 
-框架最大的好處是 **風格一致性**——上面三篇都是 TL;DR 開頭、blockquote 前提聲明、問題先行的結構。這不是因為我每次都記得，而是 Skill 在每次寫作時都會提醒。
+框架最大的好處是 **風格一致性**——上面三篇都是 TL;DR 開頭、blockquote 前提聲明、問題先行的結構。這不是因為我每次都記得，而是 Skill 在每次寫作時都會提醒，人做最終確認。
 
 ### 內容撰寫 — Claude Code + obsidian-markdown skill
 
@@ -96,7 +102,18 @@ npx skills add axtonliu/axton-obsidian-visual-skills@excalidraw-diagram -g -y
 
 ### 組裝寫入與部署 — obsidian-cli + Quartz + GitHub Actions
 
-`obsidian-cli` 讓 Claude Code 直接操作 Obsidian vault——建立文章、搜尋既有內容避免重複、批次管理 frontmatter 欄位。在工作流中它解決的核心問題是：**不需要手動在 Obsidian UI 和 terminal 之間切換**，整條產線可以在 Claude Code 的對話中一路完成到寫入 vault。
+`obsidian-cli` 讓 Claude Code 直接操作 Obsidian vault。在工作流中它解決的核心問題是：**不需要手動在 Obsidian UI 和 terminal 之間切換**，整條產線可以在 Claude Code 的對話中一路完成到寫入 vault。常用操作包括：
+
+```bash
+# 搜尋 vault 中是否已有相關文章（避免重複）
+obsidian search "技術債" --vault jimmy-blog --silent
+
+# 建立新文章並寫入內容
+obsidian create "AI 協作/實戰應用/新文章.md" --vault jimmy-blog --content "..." --silent
+
+# 讀取既有文章內容
+obsidian read "AI 協作/實戰應用/某篇文章.md" --vault jimmy-blog --silent
+```
 
 寫入後，`git push main` 觸發 GitHub Actions 自動建置部署到 GitHub Pages。這個環節完全不需要 AI——但 Claude Code 可以幫忙 debug 建置錯誤，例如 frontmatter 格式不對或 Mermaid 語法錯誤導致 build fail。
 
@@ -107,7 +124,7 @@ npx skills add axtonliu/axton-obsidian-visual-skills@excalidraw-diagram -g -y
 | 文章 | 類型 | 使用的 Skills | 特殊操作 |
 |------|------|--------------|---------|
 | [[gstack — 把 Claude Code 變成虛擬工程團隊的開源框架\|gstack 分析文]] | Deep Dive | technical-blog-writing, obsidian-markdown, excalidraw-diagram | 4 張 Mermaid → Excalidraw |
-| [[用 Claude Code Skills 組裝一條 Staff Engineer 級的技術債審查 Pipeline\|技術債審查 Pipeline]] | Workflow | technical-blog-writing, obsidian-markdown | 3 個 Skill 組合掃描實測 |
+| [[AI 審查工作流實戰：從掃描分級到商業報告\|技術債審查 Pipeline]] | Workflow | technical-blog-writing, obsidian-markdown | 3 個 Skill 組合掃描實測 |
 | [[在 Quartz Blog 中使用 Mermaid 與 Excalidraw 圖表\|Mermaid 與 Excalidraw 圖表]] | Tutorial | technical-blog-writing, obsidian-markdown, excalidraw-diagram | Excalidraw demo 圖表生成 |
 
 ## 踩坑紀錄與限制

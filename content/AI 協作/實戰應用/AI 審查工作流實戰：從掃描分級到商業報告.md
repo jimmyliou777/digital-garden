@@ -1,13 +1,13 @@
 ---
-title: 用 Claude Code Skills 組裝一條 Staff Engineer 級的技術債審查 Pipeline
-shortTitle: 技術債審查 Pipeline
+title: AI 審查工作流實戰：從掃描分級到商業報告
+shortTitle: AI 審查工作流實戰
 description: 實戰分享如何組合 architecture-review、audit-code-health、technical-debt-strategy 三個社群 Skill，讓 Claude Code 系統性地掃描專案、產出分級 findings，並自動翻譯成管理層能理解的商業語言報告
 tags: [Claude Code, Developer Tools, Technical Debt, Architecture, AI]
 published: 2026-03-25
 draft: false
 ---
 
-**TL;DR：** 利用 Claude Code 的社群 Skill 生態，組合 `architecture-review`（Sentry 團隊出品）、`audit-code-health`、`technical-debt-strategy` 三個 Skill，建立一條可重複執行的技術債審查 Pipeline。實測在一個 React SPA 排班系統上，一個下午內產出了 21 項分級 findings、技術優化清單、管理層報告，並自動建立結構化的 Jira 任務。
+**TL;DR：** 利用 Claude Code 的社群 Skill 生態，組合 `architecture-review`（Sentry 團隊出品）、`audit-code-health`、`technical-debt-strategy` 三個 Skill，建立一條可重複執行的技術債審查 Pipeline。實測在一個 React SPA 排班系統（約 200 個檔案、3 萬行 TypeScript）上，一個下午內產出了 18 項分級 findings、技術優化清單、管理層報告，並自動建立結構化的 Jira 任務。
 
 > 本文預設讀者已熟悉 Claude Code 基本操作（slash commands、Agent 背景執行）。如果你還沒用過，建議先從[官方文件](https://docs.anthropic.com/en/docs/claude-code)開始。
 
@@ -63,13 +63,15 @@ npx skills add omer-metin/skills-for-antigravity@technical-debt-strategy -g -y
 
 ## 實戰：三階段 Pipeline
 
-以下是我在一個 React + TypeScript + Jotai + TanStack Query 的排班系統上實際跑的流程。
+以下是我在一個 React + TypeScript + Jotai + TanStack Query 的排班系統（約 200 個檔案、3 萬行程式碼）上實際跑的流程。
 
 ### Phase 1：全局掃描（平行執行兩個 Agent）
 
 關鍵操作：**用兩個背景 Agent 平行執行兩套方法論**。
 
-一個 Agent 按 `architecture-review` 的方法論掃描 5 個維度，另一個按 `audit-code-health` 跑 Standard audit（3-5 cycles）。兩者同時執行，各自深入閱讀原始碼後產出獨立報告。
+一個 Agent 按 `architecture-review` 的方法論掃描 5 個維度，另一個按 `audit-code-health` 跑 Standard audit（3-5 cycles）。兩者同時執行，各自深入閱讀原始碼後產出獨立報告。具體操作是在 Claude Code 中下達類似這樣的指令：
+
+> 請用兩個背景 Agent 平行掃描 src/ 目錄。Agent 1 按 /architecture-review 的方法論做架構審查，掃描 Module Complexity、Silent Failures、Type Safety Gaps、Test Coverage、LLM-Friendliness 五個維度。Agent 2 按 /audit-code-health 跑 Standard audit（4 cycles），產出 P0/P1/P2 分級的 findings 表格。兩份報告各自獨立產出後，我再合併去重。
 
 ```mermaid
 flowchart TD
@@ -166,7 +168,7 @@ npx skills add omer-metin/skills-for-antigravity@technical-debt-strategy -g -y
 ```
 
 **Step 2：平行執行掃描**
-在 Claude Code 中啟動兩個背景 Agent，一個按 architecture-review 方法論，一個按 audit-code-health 方法論掃描 `src/`。
+在 Claude Code 中請求啟動兩個背景 Agent，分別指定方法論和掃描範圍。Claude Code 會自動觸發對應的 Skill 並在背景平行執行，完成後各自回報結果。
 
 **Step 3：整合報告**
 合併兩份報告，去重後按 P0/P1/P2 排優先級。
@@ -179,23 +181,17 @@ npx skills add omer-metin/skills-for-antigravity@technical-debt-strategy -g -y
 
 ## 反思與限制
 
-### 做得好的部分
+### 有效的部分
 
-- **兩個 Agent 平行掃描效果很好**——各自 3 分鐘，產出有互補。architecture-review 找到 audit-code-health 沒抓到的架構問題（如 monolith module 的職責混合），反之亦然
-- **Skill 方法論比通用 prompt 更系統**——architecture-review 的 5 個維度框架確保不會遺漏重要面向
+- **平行掃描產出互補**——兩個 Agent 各自 3 分鐘，architecture-review 找到架構層問題（如 monolith module 職責混合），audit-code-health 找到 code-level 問題（如 production log 洩漏），兩者重疊不多
+- **Skill 方法論比通用 prompt 更系統**——5 個維度框架確保不遺漏重要面向
 - **利息模型讓溝通變得容易**——把「應該重構」轉化為「每 sprint 虧 3.75 天」，決策邏輯完全不同
 
-### 需要人為判斷的部分
+### 仍需人為判斷
 
-- **利息估算需要校準**——Skill 給出的是框架，具體數字需要你根據團隊實際情況調整。「每 sprint 2 天的理解成本」合不合理，只有身處那個 codebase 的人才知道
-- **findings 需要驗證**——雖然兩個 Agent 都會讀原始碼，但偶爾還是會有行號偏移或理解錯誤的情況。建議把每個 P1 finding 都人工確認一遍
-- **優先級需要業務判斷**——技術上 P1 的問題，在業務上可能不急。反過來也是
-
-### Skills 生態的現實
-
-社群 Skill 的品質參差不齊。安裝時留意 skills.sh 上的三方安全評分（Gen / Socket / Snyk）——例如 `audit-code-health` 的 Gen 評分是 High Risk，使用前應該先 review 一下 SKILL.md 的內容。
-
-**Sentry 的 `architecture-review` 是目前品質最高的審查 Skill**——它來自真正有大型專案維護經驗的團隊，方法論扎實且克制（明確列出「不報告什麼」：style preferences、minor naming issues、single-line fixes）。
+- **利息估算和優先級需要校準**——Skill 產出的是框架和建議數字，但「每 sprint 2 天理解成本」是否合理、技術 P1 是否也是業務 P1，只有身處那個 codebase 的團隊才知道
+- **findings 需要驗證**——偶爾會有行號偏移或理解錯誤，建議每個 P1 finding 都人工確認一遍
+- **Skill 品質參差不齊**——安裝前留意 skills.sh 上的安全評分（Gen / Socket / Snyk），先 review SKILL.md 再使用。Sentry 的 `architecture-review` 目前品質最高——方法論扎實且克制，明確列出「不報告什麼」（style preferences、minor naming issues、single-line fixes）
 
 ## 延伸
 
