@@ -426,5 +426,6 @@ Standards 層作為 single source of truth，修改只需改一處。Rules 和 S
 
 ## 延伸閱讀
 
-- [Claude Code 系統提示詞架構優化：從 Always-Load 到按需載入](</開發思維/AI 協作/Claude Code 系統提示詞架構優化：從 Always-Load 到按需載入>) — 本文的前篇，記錄從 16 個 @ import 重構到四層載入的過程
+- [[AI 代理工作流實戰：從模糊需求到 Develop Done 的完整閉環|AI 代理工作流實戰]] — 本文的姊妹篇，用排班衝突檢查功能走一遍完整閉環
+- [[Claude Code 系統提示詞架構優化：從 Always-Load 到按需載入|系統提示詞按需載入]] — 本文的前篇，記錄從 16 個 @ import 重構到四層載入的過程
 - [Claude Code Documentation](https://docs.anthropic.com/en/docs/claude-code) — 官方文件，Skills / Rules / Commands 的完整說明
