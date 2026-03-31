@@ -10,7 +10,7 @@ tags:
   - frontend-engineering
 shortTitle: AI 開發閉環五層架構
 published: 2026-03-31
-draft: true
+draft: false
 ---
 
 ## 前言：為什麼「用 AI 寫 code」不夠？
