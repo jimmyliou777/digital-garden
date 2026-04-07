@@ -10,6 +10,7 @@ tags:
 shortTitle: AI 代理工作流完整閉環
 published: 2026-03-31
 draft: false
+status: published
 ---
 
 > **TL;DR**：用一個「排班衝突檢查」功能，走完從模糊需求到 Develop Done 的完整 AI 代理閉環。六步鏈路：探索需求 → 設計拆分 → Jira 建單 → TDD 實作 → 驗證 Pipeline → 自動完成。這篇展示系統實際運行的全貌——context 如何自動流動、人類在哪些點介入、失敗時怎麼處理。架構設計原理見 [[從 Prompt 到系統：用 Claude Code 打造 AI 開發閉環的五層架構設計|五層架構設計]]。

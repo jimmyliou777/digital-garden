@@ -9,6 +9,7 @@ tags:
 shortTitle: 系統提示詞按需載入
 published: 2026-03-27
 draft: false
+status: published
 ---
 
 ## 前言：一個 @ 符號的代價

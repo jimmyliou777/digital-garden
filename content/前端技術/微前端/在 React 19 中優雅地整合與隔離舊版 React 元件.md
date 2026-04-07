@@ -5,6 +5,7 @@ description: 在 React 19 中優雅地整合與隔離舊版 React 元件
 tags: [Lit, Web Components, React, 微前端]
 published: 2025-06-11
 draft: false
+status: published
 ---
 
 **TL;DR：** 透過 NPM 別名並存兩版 React，用 Lit Web Component 建立隔離邊界，再搭配 React.lazy 按需載入，解決 React 19 專案需要渲染 React 18 元件的版本衝突問題。初始載入零額外成本。

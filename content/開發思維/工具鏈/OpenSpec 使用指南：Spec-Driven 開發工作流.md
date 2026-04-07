@@ -5,6 +5,7 @@ description: 完整整理 OpenSpec 的核心概念、命令用法、Delta Specs 
 tags: [OpenSpec, Developer Tools, AI Workflow, Claude Code]
 published: 2026-04-01
 draft: true
+status: evergreen
 ---
 
 **TL;DR：** OpenSpec 是一個 Spec-Driven Development 框架，讓人與 AI 在寫程式碼前先對齊需求。透過 delta specs 支援既有專案，提供簡潔（4 步）與完整（8 步）兩套工作流。

@@ -4,6 +4,7 @@ description: jimmy-resume
 tags: [隨筆, 技術]
 published: 2025-06-01        # 發布日
 draft: false            # true 時不會出現在網站
+status: published
 ---
 
 # Jimmy Liou
@@ -67,3 +68,11 @@ draft: false            # true 時不會出現在網站
 如果你對這些方向有想法，歡迎交流。
 
 - **GitHub**：[jimmyliou777](https://github.com/jimmyliou777)
+
+---
+
+## 內容導航
+
+- [[AI 協作/index|AI 協作]] — 從 Prompt 技巧到系統化 AI 開發工作流的實踐記錄
+- [[前端技術/index|前端技術]] — React 生態系與微前端架構的技術筆記
+- [[開發思維/index|開發思維]] — 開發工具鏈、工作流設計與工程實踐

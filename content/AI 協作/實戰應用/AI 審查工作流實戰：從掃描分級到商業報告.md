@@ -5,6 +5,7 @@ description: 實戰分享如何組合 architecture-review、audit-code-health、
 tags: [Claude Code, Developer Tools, Technical Debt, Architecture, AI]
 published: 2026-03-25
 draft: false
+status: published
 ---
 
 **TL;DR：** 利用 Claude Code 的社群 Skill 生態，組合 `architecture-review`（Sentry 團隊出品）、`audit-code-health`、`technical-debt-strategy` 三個 Skill，建立一條可重複執行的技術債審查 Pipeline。實測在一個 React SPA 排班系統（約 200 個檔案、3 萬行 TypeScript）上，一個下午內產出了 18 項分級 findings、技術優化清單、管理層報告，並自動建立結構化的 Jira 任務。

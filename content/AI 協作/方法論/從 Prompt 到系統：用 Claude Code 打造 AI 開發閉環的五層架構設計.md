@@ -11,6 +11,7 @@ tags:
 shortTitle: AI 開發閉環五層架構
 published: 2026-03-31
 draft: false
+status: published
 ---
 
 ## 前言：為什麼「用 AI 寫 code」不夠？

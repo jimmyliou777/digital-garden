@@ -54,7 +54,7 @@ Preact components rendered server-side. Each component is a `.tsx` file. Client-
 
 - Files use Obsidian-flavored Markdown (wikilinks, callouts, embeds)
 - Frontmatter with `gray-matter` (YAML)
-- `ignorePatterns` in config: `["private", "templates", ".obsidian"]`
+- `ignorePatterns` in config: `["private", "templates", "Inbox", ".obsidian"]`
 - Date priority: frontmatter → git → filesystem
 - **不要在 Markdown 內加 `# 標題`**（H1）——Quartz 會自動從 frontmatter `title` 渲染頁面標題，手動加 H1 會導致標題重複顯示
 
@@ -67,7 +67,33 @@ Preact components rendered server-side. Each component is a `.tsx` file. Client-
 | `tags` | ✅ | 標籤陣列，如 `[AI, Claude Code]` |
 | `published` | ✅ | 發布日期 `YYYY-MM-DD` |
 | `draft` | ✅ | `true` 則不會被建置輸出 |
+| `status` | ✅ | 筆記成熟度：`fleeting` / `literature` / `evergreen` / `published` |
 | `shortTitle` | 選填 | Explorer 側邊欄顯示的短標題。未設定時自動 fallback：有 ` — ` 取前半段，超過 20 字截斷加 `...` |
+
+### 筆記成熟度與 draft 對應
+
+| status | draft | 意義 |
+|--------|-------|------|
+| `fleeting` | `true` | 未整理的靈感，存放於 `content/Inbox/` |
+| `literature` | `true` | 已整理的學習筆記，存放於分類資料夾 |
+| `evergreen` | `true` | 成熟觀點，尚未發布 |
+| `published` | `false` | 已發布文章 |
+
+### Vault 特殊資料夾
+
+| 資料夾 | 用途 | Quartz 建置 |
+|--------|------|-------------|
+| `content/Inbox/` | 新筆記入口，零整理捕捉 | `ignorePatterns` 排除 |
+| `content/private/` | AI 生成內容（wiki、digests） | `ignorePatterns` 排除 |
+| `content/templates/` | Obsidian 筆記模板 | `ignorePatterns` 排除 |
+
+### AI 生成內容回存準則
+
+當透過 Claude Code 查詢 vault 知識庫得到有價值的分析結果時：
+- **AI 生成的摘要、wiki、交叉連結分析**必須存入 `content/private/wiki/` 或 `content/private/digests/`
+- **絕對不要**將 AI 生成內容混入 `content/` 的其他分類資料夾（AI 協作、前端技術、開發思維等）
+- 人工撰寫的文章才放在分類資料夾中
+- 原因：避免 AI 內容汙染 Obsidian Graph View、搜尋結果和 backlinks
 
 ### Mermaid 圖表
 

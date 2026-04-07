@@ -5,6 +5,7 @@ description: 實戰分享如何在 Quartz + Obsidian 建構的技術 Blog 中同
 tags: [Obsidian, Quartz, Developer Tools]
 published: 2026-03-26
 draft: false
+status: published
 ---
 
 **TL;DR：** Mermaid 適合快速建立結構化圖表（流程圖、序列圖），用 code block 即可；Excalidraw 適合需要手繪風格、自由佈局的架構圖，需要搭配 Obsidian plugin 的 auto-export SVG 機制。兩者可以在同一個 Quartz blog 中共存，各取所長。

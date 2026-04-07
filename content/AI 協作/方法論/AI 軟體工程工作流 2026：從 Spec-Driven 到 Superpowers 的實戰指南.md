@@ -11,6 +11,7 @@ tags:
   - workflow
 published: 2026-03-27
 draft: false
+status: published
 shortTitle: AI 軟體工程工作流 2026
 ---
 
