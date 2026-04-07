@@ -13,6 +13,7 @@ status: published
 
 - [[在 Quartz Blog 中使用 Mermaid 與 Excalidraw 圖表]] — Quartz + Obsidian 中同時使用 Mermaid 和 Excalidraw 的設定與使用時機對比
 - [[OpenSpec 使用指南：Spec-Driven 開發工作流]] — OpenSpec 的核心概念、命令用法與多 Phase 專案實踐（撰寫中）
+- [[Skill 工具箱 — 我的 Claude Code 自建 Skill 清單|Skill 工具箱]] — 自建 Claude Code Skill 的索引、使用場景與鏈路組合
 
 ## 相關
 
