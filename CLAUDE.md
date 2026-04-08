@@ -70,14 +70,44 @@ Preact components rendered server-side. Each component is a `.tsx` file. Client-
 | `status` | ✅ | 筆記成熟度：`fleeting` / `literature` / `evergreen` / `published` |
 | `shortTitle` | 選填 | Explorer 側邊欄顯示的短標題。未設定時自動 fallback：有 ` — ` 取前半段，超過 20 字截斷加 `...` |
 
-### 筆記成熟度與 draft 對應
+### 筆記成熟度與晉升條件
 
-| status | draft | 意義 |
-|--------|-------|------|
-| `fleeting` | `true` | 未整理的靈感，存放於 `content/Inbox/` |
-| `literature` | `true` | 已整理的學習筆記，存放於分類資料夾 |
-| `evergreen` | `true` | 成熟觀點，尚未發布 |
-| `published` | `false` | 已發布文章 |
+| status | draft | 意義 | 存放位置 |
+|--------|-------|------|----------|
+| `fleeting` | `true` | 未整理的原始捕捉（剪藏、靈感、語音筆記） | `content/Inbox/` |
+| `literature` | `true` | 已整理的學習筆記，忠實呈現來源內容 | 分類資料夾 |
+| `evergreen` | `true` | 加入個人觀點的成熟筆記，尚未發布 | 分類資料夾 |
+| `published` | `false` | 已發布文章 | 分類資料夾 |
+
+#### fleeting → literature 條件（全部滿足）
+
+- [ ] Frontmatter 完整（title, description, tags, published, draft, status）
+- [ ] 內容已清理（移除雜訊、格式統一）
+- [ ] 已分類到適當資料夾（離開 Inbox）
+- [ ] 至少 1 個 outgoing wikilink
+
+#### literature → evergreen 條件（全部滿足）
+
+- [ ] 包含原創觀點或個人實踐心得（不只是來源內容的整理）
+- [ ] 至少 3 個 outgoing wikilinks（融入知識網路）
+- [ ] 正文字數 ≥ 300 字（不含 frontmatter）
+- [ ] 無未解決的 TODO / TBD / placeholder
+- [ ] 標題或內容有明確主張（不只是主題標籤式標題）
+
+#### evergreen → published 條件（全部滿足）
+
+- [ ] 陌生讀者能獨立理解（不依賴 vault 內部脈絡）
+- [ ] 正文字數 ≥ 500 字
+- [ ] 至少 1 個具體範例、程式碼片段或圖表
+- [ ] 至少 2 個 incoming backlinks（被其他筆記引用）
+- [ ] created 與發布日期間隔 ≥ 1 天（經過沉澱修訂）
+- [ ] `draft` 改為 `false`
+
+#### AI 處理 Inbox 時的判斷規則
+
+- process-inbox 預設只做 fleeting → literature（整理 + 分類）
+- 不主動升級到 evergreen — 需要人工加入個人觀點後才符合條件
+- 可以在呈報時標註「距離 evergreen 還缺什麼」作為提示
 
 ### Vault 特殊資料夾
 
