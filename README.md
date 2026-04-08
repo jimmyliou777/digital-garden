@@ -56,6 +56,10 @@ content/
 
 範例輸出：`📬 Inbox: 3 則未處理（1 則超過 7 天）` `🔗 健康：10 篇無 wikilink`
 
+## 系統架構
+
+![Blog Architecture](blog-architecture.png)
+
 ## 快速開始
 
 ```bash
