@@ -17,6 +17,7 @@ status: published
 - [[Claude Code 系統提示詞架構優化：從 Always-Load 到按需載入]] — 將 16 個 @import 改為四層按需載入，每 session 節省約 15,000 tokens
 - [[AI 審查工作流實戰：從掃描分級到商業報告]] — 組合三個社群 Skill 系統性掃描專案，自動翻譯成管理層商業語言
 - [[AI 寫作工作流實戰：從主題發想到自動部署]] — Claude Code + Obsidian CLI + 社群 Skills 組成完整技術文章產線
+- [[AI E2E 測試實戰：用 Claude Code 平行代理同時操控三個瀏覽器驗證你的網站]] — 平行代理 + Playwright 同時操控三個瀏覽器驗證網站，97 秒完成
 
 ## 相關
 
