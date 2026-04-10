@@ -202,3 +202,9 @@ flowchart TD
 兩篇合起來，形成完整的 Claude Code prompt 架構設計指南：先用姊妹篇決定放在哪一層，再用本文決定該層裡放什麼內容。
 
 核心就一句話：**Rule 是邊界，Memory 是經驗，Skill 是流程。**
+
+## 延伸閱讀
+
+- [[從 Prompt 到系統：用 Claude Code 打造 AI 開發閉環的五層架構設計|五層架構設計]] — 姊妹篇，從系統層級看五層架構的設計原理
+- [[Claude Code 系統提示詞架構優化：從 Always-Load 到按需載入|系統提示詞按需載入]] — 四層載入機制的觸發方式和 token 成本
+- [[AI E2E 測試實戰：用 Claude Code 平行代理同時操控三個瀏覽器驗證你的網站|AI E2E 測試實戰]] — Skill 在平行代理場景中的實際運作方式
