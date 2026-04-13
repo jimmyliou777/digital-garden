@@ -1,16 +1,16 @@
 ---
 title: Claude Code 系統提示詞架構優化：從 Always-Load 到按需載入
 description: 實戰分享如何將 CLAUDE.md 的 16 個 @ import 改為四層按需載入架構，每 session 節省約 15,000 tokens
-tags:
-  - claude-code
-  - prompt-engineering
-  - ai-development
-  - developer-tools
+tags: [claude-code, prompt-engineering, ai-development, developer-tools]
 shortTitle: 系統提示詞按需載入
 published: 2026-03-27
 draft: false
 status: published
 ---
+
+**TL;DR** — `@` import 在 session 啟動時展開完整內容，16 個 import 每次對話就消耗 ~15,000 tokens。改用四層按需載入架構（CLAUDE.md → Rules → Skills → on-demand Read），可大幅降低基礎 token 成本，同時維持 AI 需要時能取得完整指引。
+
+> 本文預設你已經在專案中使用 CLAUDE.md 一段時間，並對 Claude Code 的 Rules 和 Skills 機制有基本認識。如果這些名詞對你來說還很陌生，建議先閱讀 [Claude Code 官方文件](https://docs.anthropic.com/en/docs/claude-code)。
 
 ## 前言：一個 @ 符號的代價
 
@@ -39,6 +39,7 @@ Session 啟動
   │    例：編輯 src/components/** → 載入 react-components.md
   │
   ├─ Layer 3: .claude/skills/（metadata only, ~100 tokens/skill）
+  │    Skills 是 Claude Code 的擴充模組，透過 slash command 觸發特定工作流程。
   │    只載入 name + description
   │    完整內容在調用時才展開
   │
@@ -200,3 +201,8 @@ Anthropic 的 Claude Code Best Practices 文件明確指出：
 ---
 
 這個模式可以直接套用到任何使用 Claude Code 的專案。關鍵不是寫更多指令，而是在正確的層級放置正確的資訊，讓 AI agent 像開發者一樣——需要時查文件，而不是把所有文件背在身上。
+
+## 延伸閱讀
+
+- [[AI 代理工作流實戰：從模糊需求到 Develop Done 的完整閉環|AI 代理工作流實戰]] — Skills 層（Layer 3）封裝了完整的 TDD 閉環，是按需載入的實戰案例
+- [[gstack — 把 Claude Code 變成虛擬工程團隊的開源框架|gstack 框架]] — gstack 的 preamble-tier 系統是另一種分層載入的設計

@@ -1,15 +1,12 @@
 ---
 title: "Claude Code之父曝15項技巧：如何讓AI自己排程寫程式？"
+shortTitle: "Boris Cherny 15 技巧"
 source: "https://www.bnext.com.tw/article/90524/claude-code-boris-cherny-15-pro-tips-auto-dev-workflow"
 author: 李先泰
 published: 2026-04-08
 created: 2026-04-08
 description: "Claude Code 創造者 Boris Cherny 親揭 15 個隱藏功能，涵蓋跨裝置接力、排程自動化等，重新定義 AI 輔助開發的工作方式。"
-tags:
-  - Claude Code
-  - AI
-  - Developer Tools
-  - Workflow
+tags: [Claude Code, AI, Developer Tools, Workflow]
 status: literature
 draft: true
 ---
@@ -166,6 +163,8 @@ claude -w
 ```
 claude -p --bare "你的任務"
 ```
+
+`--bare` 跳過的載入流程正是 [[Claude Code 系統提示詞架構優化：從 Always-Load 到按需載入|系統提示詞按需載入]] 討論的四層機制——如果你的 CLAUDE.md 已經很精簡，`--bare` 的加速效果會比較有限。
 
 ### 技巧 13：--add-dir 讓 Claude 跨 repo 工作
 

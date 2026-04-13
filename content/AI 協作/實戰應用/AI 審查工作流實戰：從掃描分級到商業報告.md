@@ -8,7 +8,7 @@ draft: false
 status: published
 ---
 
-**TL;DR：** 利用 Claude Code 的社群 Skill 生態，組合 `architecture-review`（Sentry 團隊出品）、`audit-code-health`、`technical-debt-strategy` 三個 Skill，建立一條可重複執行的技術債審查 Pipeline。實測在一個 React SPA 排班系統（約 200 個檔案、3 萬行 TypeScript）上，一個下午內產出了 18 項分級 findings、技術優化清單、管理層報告，並自動建立結構化的 Jira 任務。
+**TL;DR：** 利用 Claude Code 的社群 Skill（Skill 是 Claude Code 的擴充模組，透過 slash command 觸發特定工作流程）生態，組合 `architecture-review`（Sentry 團隊出品）、`audit-code-health`、`technical-debt-strategy` 三個 Skill，建立一條可重複執行的技術債審查 Pipeline。實測在一個 React SPA 排班系統（約 200 個檔案、3 萬行 TypeScript）上，一個下午內產出了 18 項分級 findings、技術優化清單、管理層報告，並自動建立結構化的 Jira 任務。
 
 > 本文預設讀者已熟悉 Claude Code 基本操作（slash commands、Agent 背景執行）。如果你還沒用過，建議先從[官方文件](https://docs.anthropic.com/en/docs/claude-code)開始。
 
@@ -70,7 +70,7 @@ npx skills add omer-metin/skills-for-antigravity@technical-debt-strategy -g -y
 
 關鍵操作：**用兩個背景 Agent 平行執行兩套方法論**。
 
-一個 Agent 按 `architecture-review` 的方法論掃描 5 個維度，另一個按 `audit-code-health` 跑 Standard audit（3-5 cycles）。兩者同時執行，各自深入閱讀原始碼後產出獨立報告。具體操作是在 Claude Code 中下達類似這樣的指令：
+一個 Agent 按 `architecture-review` 的方法論掃描 5 個維度，另一個按 `audit-code-health` 跑 Standard audit（3-5 cycles）。兩者同時執行，各自深入閱讀原始碼後產出獨立報告。在 Claude Code 中，你可以直接用自然語言請求「同時啟動兩個背景 Agent 分別執行 X 和 Y」，Claude Code 會透過 Agent tool 派發子代理平行作業。具體操作是在 Claude Code 中下達類似這樣的指令：
 
 > 請用兩個背景 Agent 平行掃描 src/ 目錄。Agent 1 按 /architecture-review 的方法論做架構審查，掃描 Module Complexity、Silent Failures、Type Safety Gaps、Test Coverage、LLM-Friendliness 五個維度。Agent 2 按 /audit-code-health 跑 Standard audit（4 cycles），產出 P0/P1/P2 分級的 findings 表格。兩份報告各自獨立產出後，我再合併去重。
 
@@ -83,6 +83,8 @@ flowchart TD
 ```
 
 **結果**：兩個 Agent 各花了約 3 分鐘，共讀取了上百個檔案。產出有部分重疊（例如大檔案和 `as any` 的問題兩邊都抓到），但也有各自獨特的發現。
+
+> [!tip] 平行 Agent 的模式在其他場景也很有效——例如 [[AI E2E 測試實戰：用 Claude Code 平行代理同時操控三個瀏覽器驗證你的網站|AI E2E 測試實戰]] 中，三個代理同時操控三個瀏覽器做 E2E 測試。
 
 architecture-review 特別擅長找**架構層級的問題**——例如一個 1481 行的 utils 檔案混合了 5 種職責，或者核心計算函式 catch 後靜默回傳 `0` 讓使用者看到錯誤數據。
 
@@ -112,6 +114,8 @@ audit-code-health 則更擅長找**具體的 code-level 問題**——production
 
 這是 `technical-debt-strategy` 發揮作用的地方。它的核心框架是**利息模型**：
 
+> [!warning] 以下利息數字為 AI 根據掃描結果的建議值，需要由熟悉 codebase 的團隊成員校準後才適合用於向上溝通。
+
 | 技術債項目 | 每 sprint 利息 | 累積 6 個月 | 修復成本 | 回本期 |
 |-----------|---------------|------------|---------|--------|
 | 巨大模組理解成本 | ~2 天 | ~24 天 | 8 天 | 4 sprints |
@@ -140,7 +144,7 @@ audit-code-health 則更擅長找**具體的 code-level 問題**——production
 
 ### 自動建立 Jira 任務
 
-最後一步是把整份報告結構化成 Jira 任務。透過 Atlassian MCP Server，直接在 Claude Code 中建立：
+最後一步是把整份報告結構化成 Jira 任務。透過 Atlassian MCP Server（MCP 是讓 AI 操作外部工具的標準協定），直接在 Claude Code 中建立：
 
 - **1 個 Epic** — 包含報告摘要和利息估算
 - **3 個 Story** — 對應三期（安全修復 → 補測試 → 結構重構）
@@ -205,6 +209,8 @@ npx skills find "security scan"
 ```
 
 [skills.sh](https://skills.sh) 上目前有數百個社群 Skill，涵蓋從 code review 到 DevOps 到技術寫作。
+
+- [[AI 寫作工作流實戰：從主題發想到自動部署|AI 寫作工作流]] — 本文是用 AI 寫作產線產出的案例之一
 
 ### 自製 Skill
 
