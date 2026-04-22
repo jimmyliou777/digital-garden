@@ -16,3 +16,4 @@ replit.nix
 openspec/
 docs/superpowers/
 content/Excalidraw/*.md
+content/raw/**/*
