@@ -20,6 +20,7 @@ status: published
 - [[AI 審查工作流實戰：從掃描分級到商業報告]] — 三個 Skill 平行掃描專案，自動翻譯成管理層商業語言
 - [[AI 代理工作流實戰：從模糊需求到 Develop Done 的完整閉環]] — 六步閉環：探索、設計、建單、TDD、驗證、完成
 - [[AI E2E 測試實戰：用 Claude Code 平行代理同時操控三個瀏覽器驗證你的網站]] — 平行代理 + Playwright，97 秒完成多面向 E2E 測試
+- [[OpenSpec × Superpowers × Opus 4.7 CLI 實戰：五階段]] — 以加 Dark Mode 為例走過五階段 CLI 指令流，含 Recap/Compact/Rewind/Clear 四工具決策樹
 
 ## 基礎設施
 
