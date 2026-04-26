@@ -572,6 +572,13 @@ brainstorming → writing-plans → subagent-driven-development → finishing
 
 ## Further Reading
 
+### 站內延伸
+
+- [[Superpowers-OpenSpec-兩個抽象層]] — Superpowers（執行層）與 OpenSpec（規格層）為何互補、何時各用
+- [[Superpowers-OpenSpec-OAuth2-8階段實戰]] — 用 Google OAuth2 走完 8 階段，含 Phase 5 規格回填與 6 個常見陷阱
+
+### 外部資源
+
 - [Superpowers GitHub](https://github.com/obra/superpowers) — 主 repo（100K+ stars）
 - [Agentic Coding Handbook - TDD](https://tweag.github.io/agentic-coding-handbook/WORKFLOW_TDD/) — TDD 工作流參考
 - [Addy Osmani's LLM Coding Workflow 2026](https://addyosmani.com/blog/ai-coding-workflow/) — 個人工作流分享

@@ -341,3 +341,4 @@ Agent C 驗證了最容易被忽略的兩件事：Dark Mode 的狀態持久化�
 - [[AI 代理工作流實戰：從模糊需求到 Develop Done 的完整閉環|AI 代理工作流實戰]] — 完整 AI 代理工作流的六步閉環，包含 Agent 如何自動承接 context
 - [[從 Prompt 到系統：用 Claude Code 打造 AI 開發閉環的五層架構設計|五層架構設計]] — Skill、Rule、Memory 的分層架構，理解平行代理在整個系統中的位置
 - [[Claude Code Prompt 分層設計原則：Rule、Memory、Skill 各該放什麼？|Prompt 分層設計原則]] — Agent prompt 的設計原則也適用於 Skill 和 Rule 的 prompt 設計
+- [[gstack — 把 Claude Code 變成虛擬工程團隊的開源框架|gstack 框架分析]] — gstack 的 Browse System daemon 和 ref system 把「accessibility tree → AI 可操作」這個概念做到極致

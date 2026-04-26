@@ -120,6 +120,13 @@ USC 研究團隊提出的解釋是**運算資源競爭**。
 
 ## Further Reading
 
+### 站內延伸
+
+- [[從 Prompt 到系統：用 Claude Code 打造 AI 開發閉環的五層架構設計|五層架構設計]] — 把「不寫泛用角色設定」落實在 CLAUDE.md / Commands / Skills 的系統設計
+- [[Claude Code Prompt 分層設計原則：Rule、Memory、Skill 各該放什麼？|Prompt 三層分層設計]] — Rule / Memory / Skill 的內容歸屬決策邏輯，與本文「具體指令 > 角色修飾」原則一致
+
+### 外部資源
+
 - [TechNews — 寫提示詞別再加「你是專家」，研究建議直接發送指令](https://technews.tw/2026/03/24/dont-add-youre-an-expert-to-your-prompts-anymore/)
 - [PromptHub — Role-Prompting: Does Adding Personas Really Make a Difference?](https://www.prompthub.us/blog/role-prompting-does-adding-personas-to-your-prompts-really-make-a-difference)
 - [Learn Prompting — Role Prompting](https://learnprompting.org/docs/advanced/zero_shot/role_prompting)

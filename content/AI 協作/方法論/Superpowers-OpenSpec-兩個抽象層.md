@@ -13,6 +13,9 @@ status: fleeting
 
 **TL;DR：** Superpowers 管「怎麼做」、OpenSpec 管「做什麼」，兩者不在同一抽象層，所以互補而非競爭。新 feature ≥30 分鐘工作量再組合，小改動單用 Superpowers 即可。
 
+> [!info] 本文在系列中的位置
+> 想看更大的工作流景觀（六大方案比較）見 [[AI 軟體工程工作流 2026：從 Spec-Driven 到 Superpowers 的實戰指南|AI 工作流 2026]]；想看具體案例見 [[Superpowers-OpenSpec-OAuth2-8階段實戰|OAuth2 8 階段實戰]]。本文聚焦在「兩個工具為何不衝突」的概念對標。
+
 ## 兩個都「先想清楚再動手」，重複嗎？
 
 接觸這兩個工具的工程師遲早會問：[Superpowers](https://github.com/obra/superpowers) 強調 brainstorm → plan → TDD，[OpenSpec](https://github.com/Fission-AI/OpenSpec) 也要先寫 proposal/specs/design/tasks，看起來都是「動手前的紀律」，為什麼要兩個都裝？

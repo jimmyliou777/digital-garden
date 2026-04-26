@@ -234,7 +234,8 @@ Cherny 坦言：「我大部分的程式碼都是用說的，不是用打的。�
 
 ## 相關筆記
 
-- [[從 Prompt 到系統：用 Claude Code 打造 AI 開發閉環的五層架構設計]]
+- [[從 Prompt 到系統：用 Claude Code 打造 AI 開發閉環的五層架構設計]] — 用五層架構把這些技巧串成完整工作流
+- [[Claude Code Prompt 分層設計原則：Rule、Memory、Skill 各該放什麼？|Prompt 三層分層設計]] — hooks 規則、Rules 與 Skills 的內容歸屬決策邏輯
 - [[AI 代理工作流實戰：從模糊需求到 Develop Done 的完整閉環]]
 - [[AI 軟體工程工作流 2026：從 Spec-Driven 到 Superpowers 的實戰指南]]
 - [[gstack — 把 Claude Code 變成虛擬工程團隊的開源框架]]

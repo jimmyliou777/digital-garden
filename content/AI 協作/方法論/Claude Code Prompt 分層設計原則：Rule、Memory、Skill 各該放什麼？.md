@@ -14,7 +14,11 @@ draft: false
 **TL;DR：** Rule 只放「違反會出錯」的硬約束（護欄），Memory 放「不遵守不會壞，但遵守更好」的軟知識（經驗），Skill 放完整工作流程模板（SOP）。實測將兩個 rule 瘦身（jira-tools -60%、drawio-cli -46%），40 項驗收全數通過，行為與重構前完全一致。
 
 > [!NOTE] 本文定位
-> 這篇聚焦「每層該放什麼內容」的決策邏輯。如果你對四層載入機制（CLAUDE.md / rules / skills / on-demand read）的觸發方式和 token 成本感興趣，見姊妹篇 [[Claude Code 系統提示詞架構優化：從 Always-Load 到按需載入]]。
+> 這篇聚焦「每層該放什麼內容」的決策邏輯——「三層」指**內容性質**（Rule 護欄 / Memory 經驗 / Skill SOP），是橫向分類。
+>
+> 兩篇姊妹篇：
+> - [[從 Prompt 到系統：用 Claude Code 打造 AI 開發閉環的五層架構設計|五層架構設計]] — session context 如何縱向載入（載入時機）
+> - [[Claude Code 系統提示詞架構優化：從 Always-Load 到按需載入]] — 四層載入機制的觸發方式與 token 成本
 
 ---
 

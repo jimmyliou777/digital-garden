@@ -14,6 +14,9 @@ draft: false
 status: published
 ---
 
+> [!info] 「五層」是什麼層？
+> 本文的「五層」指**載入時機**（CLAUDE.md → Commands → Skills → Rules → Standards 的縱向堆疊）。若你想看「同一層內容該怎麼分類」（Rule 護欄 / Memory 經驗 / Skill SOP 的橫向歸屬），見姊妹篇 [[Claude Code Prompt 分層設計原則：Rule、Memory、Skill 各該放什麼？|Prompt 三層分層設計]]。
+
 ## 前言：為什麼「用 AI 寫 code」不夠？
 
 大多數工程師使用 AI coding tools 的模式長這樣：遇到問題，開 Cursor 或 Copilot Chat，丟一段 prompt，拿到回答，貼進 codebase，手動調整到能跑。下一次遇到類似問題，再重複一次。
