@@ -157,6 +157,9 @@ obsidian read "AI 協作/實戰應用/某篇文章.md" --vault jimmy-blog --sile
 
 ## 延伸閱讀
 
+> [!info] 站內延伸
+> - [[AI 代理工作流實戰：從模糊需求到 Develop Done 的完整閉環|AI 代理工作流實戰]] — 同樣以 AI 為 orchestrator 的完整閉環，但場景是軟體開發（需求→TDD→Jira→部署），與本文的寫作產線互為參照
+
 - [Claude Code 官方文件](https://docs.anthropic.com/en/docs/claude-code)
 - [Skills 生態 — skills.sh](https://skills.sh)
 - [Quartz v4 官方文件](https://quartz.jzhao.xyz/)

@@ -25,7 +25,7 @@ status: published
 
 ## 實戰應用
 
-用真實案例拆解 AI 開發工作流的每一步。
+用真實案例拆解 AI 開發工作流的每一步。完整索引見 [[AI 協作/實戰應用/index|實戰應用目錄]]。
 
 - [[gstack — 把 Claude Code 變成虛擬工程團隊的開源框架]] — Y Combinator CEO 的開源框架分析
 - [[AI 代理工作流實戰：從模糊需求到 Develop Done 的完整閉環]] — 從模糊需求到完成開發的六步閉環
