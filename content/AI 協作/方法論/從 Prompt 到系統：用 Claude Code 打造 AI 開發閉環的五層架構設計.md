@@ -62,6 +62,9 @@ status: published
 
 ## Layer 1：CLAUDE.md 的設計哲學
 
+> [!info] 詳細概念見
+> [[CLAUDE.md 專案入口層：Session 自動載入的設計哲學]] — 把 CLAUDE.md 當成獨立的設計概念來看，包含「索引 vs 百科全書」的設計權衡與 token 成本模型。
+
 CLAUDE.md 是每次 Claude Code session 自動載入的專案指引。它的角色不是百科全書，而是 **索引 + 最小必要 context**。
 
 ### 什麼放 CLAUDE.md？
@@ -92,6 +95,9 @@ CLAUDE.md 是每次 Claude Code session 自動載入的專案指引。它的角�
 ---
 
 ## Layer 2-3：Commands 與 Skills 的分工
+
+> [!info] Skills 層詳細概念見
+> [[Claude Code Skills 層：SDLC 結構化流程的按需觸發機制]] — 把 Skills 當成獨立概念深入討論，含按需觸發機制、與 Commands 的分工、以及為什麼選擇索引型載入。
 
 Commands 和 Skills 的差異在於粒度和職責：
 
@@ -232,6 +238,9 @@ Subagent 隔離的 overhead 是兩次 context 建立（多約 30 秒），但換
 ---
 
 ## Layer 4：Path-Based Rules 的零配置設計
+
+> [!info] 詳細概念見
+> [[Claude Code Rules 層：Path-Based 自動載入的零配置設計]] — Rules 層作為獨立概念深入討論，含 path-based 觸發機制、與 always-load 的對比，以及與內容分類（Rule/Memory/Skill）的關係。
 
 ### 傳統做法的問題
 
