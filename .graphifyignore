@@ -3,6 +3,7 @@ Inbox/
 private/
 templates/
 raw/
+node_modules/
 
 # === Obsidian internals ===
 .obsidian/
