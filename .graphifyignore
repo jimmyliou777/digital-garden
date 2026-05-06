@@ -1,0 +1,18 @@
+# === Drafts & Inbox (Quartz ignorePatterns) ===
+Inbox/
+private/
+templates/
+raw/
+
+# === Obsidian internals ===
+.obsidian/
+
+# === Binary assets ===
+images/
+Excalidraw/*.excalidraw
+Excalidraw/*.excalidraw.md
+Excalidraw/*.svg
+Excalidraw/*.png
+
+# === Graphify Output ===
+graphify-out/
