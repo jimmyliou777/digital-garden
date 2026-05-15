@@ -10,7 +10,7 @@ status: published
 
 > **TL;DR**：用一個「排班衝突檢查」功能，走完從模糊需求到 Develop Done 的完整 AI 代理閉環。六步鏈路：探索需求 → 設計拆分 → Jira 建單 → TDD 實作 → 驗證 Pipeline → 自動完成。這篇展示系統實際運行的全貌——context 如何自動流動、人類在哪些點介入、失敗時怎麼處理。架構設計原理見 [[從 Prompt 到系統：用 Claude Code 打造 AI 開發閉環的五層架構設計|五層架構設計]]。
 
-> **讀者假設：** 你用過 Claude Code 或類似的 AI coding tool，知道 TDD 的基本概念（RED-GREEN-REFACTOR），對 Jira workflow 有基本認識。如果你還沒讀過五層架構設計，建議先看那篇了解「為什麼」，再回來看這篇的「怎麼做」。
+> **讀者假設：** 你用過 Claude Code 或類似的 AI coding tool，知道 TDD 的基本概念（RED-GREEN-REFACTOR），對 Jira workflow 有基本認識。如果你還沒讀過五層架構設計，建議先看那篇了解「為什麼」，再回到這篇看「怎麼做」。
 
 > [!info] 本文展示的 `/opsx`、`/thes-workflow`、`jira-ops` 等指令是作者的自建 Skill，文章著重在流程概念與設計決策的展示，非 step-by-step 安裝教學。如果你想建立類似的工作流，需要依據自己的專案需求設計對應的 Skills。
 
@@ -18,9 +18,9 @@ status: published
 
 ## 為什麼需要「閉環」？
 
-一句話回顧（碎片化使用 AI 的根因，TL;DR 提到的姊妹篇有完整討論）：**每一步的產出，自動成為下一步的輸入，不靠人類手動搬運 context**——這就是閉環。
+先回顧一句（碎片化使用 AI 的根因，完整討論見 TL;DR 提到的姊妹篇）：**每一步的產出，自動成為下一步的輸入，不靠人類手動搬運 context**——這就是閉環。
 
-這篇文章用一個虛構但典型的場景——React 排班系統的「衝突檢查功能」——走完整條鏈路，讓你感受閉環實際跑起來的樣子。
+這篇文章用一個虛構但典型的場景——React 排班系統的「衝突檢查功能」——走完整條鏈路，讓你看見閉環實際運行的樣貌。
 
 ---
 
@@ -96,7 +96,7 @@ PM 在 Slack 丟了一句：
 
 執行 `/opsx explore`，AI 自動：
 
-1. **掃描 codebase** — 找到排班資料模型 `Shift { employeeId, startTime, endTime, date }`、現有的排班建立流程 `useCreateShift` hook、排班表頁面 `SchedulePage.tsx`（也列了 `useEmployeePreference` 和 `ShiftSwapRequest` 等不直接相關的 hook——AI 探索時會過度發散，需要人類篩選）
+1. **掃描 codebase** — 找到排班資料模型 `Shift { employeeId, startTime, endTime, date }`、現有的排班建立流程 `useCreateShift` hook、排班表頁面 `SchedulePage.tsx`。AI 探索時會過度發散，也會列出 `useEmployeePreference` 和 `ShiftSwapRequest` 這類不直接相關的 hook，需要人類篩選
 2. **分析現有邏輯** — 發現目前建立班表時沒有任何衝突驗證，直接打 API 寫入
 3. **列出待釐清問題** — 產出一份結構化的問題清單
 
@@ -106,10 +106,12 @@ PM 在 Slack 丟了一句：
 ## 需求釐清：排班衝突檢查
 
 ### 已確認
+
 - 資料模型：Shift { employeeId, startTime, endTime, date }
 - 現有流程：建班表 → 直接送 API → 無驗證
 
 ### 待確認（需 PM/Tech Lead 決定）
+
 1. 衝突定義：同一員工、同一天、時段重疊？還是跨天也算？
 2. 觸發時機：建立時檢查？還是編輯時也要？
 3. 衝突處理：硬擋（不給建）還是軟提醒（警告但可繼續）？
@@ -147,11 +149,13 @@ Step 1 確認後的需求 + codebase 分析結果，都在同一個 context 裡�
 ## 技術設計：排班衝突檢查
 
 ### 架構決策
+
 - 衝突檢測放在前端 util（純函式，不依賴 API）
 - 理由：即時回饋 UX 更好，不需等 API roundtrip
 - 資料來源：用現有的 `useShiftsByDate` hook 取當天班表
 
 ### 實作方案
+
 1. `detectShiftConflicts(newShift, existingShifts)` — 純函式
 2. `<ConflictWarning>` 組件 — 顯示衝突細節
 3. 整合到 `CreateShiftForm` 和 `EditShiftForm`
@@ -159,16 +163,19 @@ Step 1 確認後的需求 + codebase 分析結果，都在同一個 context 裡�
 ### Subtask 拆分
 
 #### THES-4701：衝突檢測 util
+
 - AC（Acceptance Criteria，驗收條件）：給定一個新班表和既有班表陣列，回傳衝突的班表清單
 - 測試策略：tdd-unit（純函式，無 DOM 依賴）
 - Story Points：2
 
 #### THES-4702：衝突警告 UI 組件
+
 - AC：當檢測到衝突時顯示警告，列出衝突的班表，提供「仍要送出」按鈕
 - 測試策略：tdd-integration（需 render 組件）
 - Story Points：3
 
 #### THES-4703：表單整合 E2E 驗證
+
 - AC：在建班表和編輯班表流程中，實際觸發衝突警告並驗證完整流程
 - 測試策略：e2e（跨頁面流程）
 - Story Points：2
@@ -182,7 +189,7 @@ Review 設計。這裡我調整了一點：把衝突檢測改成也支援回傳�
 
 ## Step 3：Jira 建單（jira-ops skill）
 
-設計確認後，AI 用 `jira-ops` skill（Skill 是 Claude Code 的擴充模組，透過 slash command 觸發特定工作流程）自動在 Jira 建立 subtask tickets。因為 propose 和 jira-ops 在同一個 session context 裡，人類在 propose 產出上做的修改（例如剛才加的衝突類型）直接被 jira-ops 拿到——不需要手動複製或重新描述：
+設計確認後，AI 用 `jira-ops` skill 自動在 Jira 建立 subtask tickets（Skill 是 Claude Code 的擴充模組，透過 slash command 觸發特定工作流程）。因為 propose 和 jira-ops 跑在同一個 session context 裡，人類在 propose 產出上做的修改（例如剛才加的衝突類型）會直接被 jira-ops 拿到——不需要手動複製或重新描述：
 
 ```
 > 使用 jira-ops skill 建立以下 tickets：
@@ -195,7 +202,7 @@ Review 設計。這裡我調整了一點：把衝突檢測改成也支援回傳�
    AC：已從 propose 產出自動帶入
 ```
 
-每張 ticket 的 Acceptance Criteria 直接從 Step 2 的 propose 產出寫入——不用手動複製貼上。這就是閉環的意義：**propose 的產出格式就是 Jira AC 的輸入格式。**
+每張 ticket 的 Acceptance Criteria 直接從 Step 2 的 propose 產出帶入——不用手動複製貼上。這就是閉環的意義：**propose 的產出格式，就是 Jira AC 的輸入格式。**
 
 ---
 
@@ -219,90 +226,91 @@ Phase 1: 策略分析...
   理由：無 DOM、無 API 依賴，純邏輯
 ```
 
-策略判定是自動的——根據 ticket type 和影響的程式碼層級，決策矩陣自動選 `tdd-unit`。
+策略判定是自動的——根據 ticket type 和影響的程式碼層級，決策矩陣選出 `tdd-unit`。
 
 ### Phase 2：Test Agent 寫 Failing Test（RED）
 
 Test Agent 是一個**隔離的 subagent**。它的 context 裡只有：
+
 - Ticket 的 AC
 - 現有測試的 pattern（從 `src/test/README.md` 載入）
 - `test-writing` skill 的指引
 
 它**看不到**任何實作程式碼或實作想法。
 
+![[01-framework-subagent-isolation.png]]
+
 ```typescript
 // src/utils/__tests__/detectShiftConflicts.test.ts
 
-import { describe, it, expect } from 'vitest'
-import { detectShiftConflicts } from '../detectShiftConflicts'
-import type { Shift, ConflictResult } from '../types'
+import { describe, it, expect } from "vitest"
+import { detectShiftConflicts } from "../detectShiftConflicts"
+import type { Shift, ConflictResult } from "../types"
 
-const makeShift = (
-  overrides: Partial<Shift> = {}
-): Shift => ({
-  id: 'shift-1',
-  employeeId: 'emp-1',
-  date: '2026-03-31',
-  startTime: '09:00',
-  endTime: '17:00',
+const makeShift = (overrides: Partial<Shift> = {}): Shift => ({
+  id: "shift-1",
+  employeeId: "emp-1",
+  date: "2026-03-31",
+  startTime: "09:00",
+  endTime: "17:00",
   ...overrides,
 })
 
-describe('detectShiftConflicts', () => {
-  it('同一員工、時段完全重疊 → 回傳 full-overlap', () => {
-    const newShift = makeShift({ id: 'new' })
-    const existing = [makeShift({ id: 'existing' })]
+describe("detectShiftConflicts", () => {
+  it("同一員工、時段完全重疊 → 回傳 full-overlap", () => {
+    const newShift = makeShift({ id: "new" })
+    const existing = [makeShift({ id: "existing" })]
 
     const conflicts = detectShiftConflicts(newShift, existing)
 
     expect(conflicts).toHaveLength(1)
-    expect(conflicts[0].type).toBe('full-overlap')
-    expect(conflicts[0].conflictWith.id).toBe('existing')
+    expect(conflicts[0].type).toBe("full-overlap")
+    expect(conflicts[0].conflictWith.id).toBe("existing")
   })
 
-  it('同一員工、時段部分重疊 → 回傳 partial-overlap', () => {
-    const newShift = makeShift({ id: 'new', startTime: '14:00', endTime: '20:00' })
-    const existing = [makeShift({ id: 'existing' })] // 09:00-17:00
+  it("同一員工、時段部分重疊 → 回傳 partial-overlap", () => {
+    const newShift = makeShift({ id: "new", startTime: "14:00", endTime: "20:00" })
+    const existing = [makeShift({ id: "existing" })] // 09:00-17:00
 
     const conflicts = detectShiftConflicts(newShift, existing)
 
     expect(conflicts).toHaveLength(1)
-    expect(conflicts[0].type).toBe('partial-overlap')
+    expect(conflicts[0].type).toBe("partial-overlap")
   })
 
-  it('同一員工、時段不重疊 → 回傳空陣列', () => {
-    const newShift = makeShift({ id: 'new', startTime: '18:00', endTime: '22:00' })
-    const existing = [makeShift({ id: 'existing' })] // 09:00-17:00
+  it("同一員工、時段不重疊 → 回傳空陣列", () => {
+    const newShift = makeShift({ id: "new", startTime: "18:00", endTime: "22:00" })
+    const existing = [makeShift({ id: "existing" })] // 09:00-17:00
 
     expect(detectShiftConflicts(newShift, existing)).toHaveLength(0)
   })
 
-  it('不同員工、時段重疊 → 不算衝突', () => {
-    const newShift = makeShift({ id: 'new', employeeId: 'emp-2' })
-    const existing = [makeShift({ id: 'existing', employeeId: 'emp-1' })]
+  it("不同員工、時段重疊 → 不算衝突", () => {
+    const newShift = makeShift({ id: "new", employeeId: "emp-2" })
+    const existing = [makeShift({ id: "existing", employeeId: "emp-1" })]
 
     expect(detectShiftConflicts(newShift, existing)).toHaveLength(0)
   })
 
-  it('邊界：結束時間等於開始時間（相鄰不重疊）', () => {
-    const newShift = makeShift({ id: 'new', startTime: '17:00', endTime: '22:00' })
-    const existing = [makeShift({ id: 'existing' })] // 09:00-17:00
+  it("邊界：結束時間等於開始時間（相鄰不重疊）", () => {
+    const newShift = makeShift({ id: "new", startTime: "17:00", endTime: "22:00" })
+    const existing = [makeShift({ id: "existing" })] // 09:00-17:00
 
     expect(detectShiftConflicts(newShift, existing)).toHaveLength(0)
   })
 
-  it('多筆既有班表、多筆衝突', () => {
-    const newShift = makeShift({ id: 'new', startTime: '10:00', endTime: '20:00' })
+  it("多筆既有班表、多筆衝突", () => {
+    const newShift = makeShift({ id: "new", startTime: "10:00", endTime: "20:00" })
     const existing = [
-      makeShift({ id: 'morning', startTime: '08:00', endTime: '12:00' }),
-      makeShift({ id: 'afternoon', startTime: '14:00', endTime: '18:00' }),
-      makeShift({ id: 'night', startTime: '20:00', endTime: '23:00' }),
+      makeShift({ id: "morning", startTime: "08:00", endTime: "12:00" }),
+      makeShift({ id: "afternoon", startTime: "14:00", endTime: "18:00" }),
+      makeShift({ id: "night", startTime: "20:00", endTime: "23:00" }),
     ]
 
     const conflicts = detectShiftConflicts(newShift, existing)
 
     expect(conflicts).toHaveLength(2)
-    expect(conflicts.map((c) => c.conflictWith.id)).toEqual(['morning', 'afternoon'])
+    expect(conflicts.map((c) => c.conflictWith.id)).toEqual(["morning", "afternoon"])
   })
 })
 ```
@@ -320,6 +328,7 @@ describe('detectShiftConflicts', () => {
 ### Phase 3：Impl Agent 最小實作（GREEN）
 
 Impl Agent 是另一個隔離的 subagent。它看到的是：
+
 - Phase 2 產出的 failing tests
 - 相關的 source code（`src/utils/` 下的現有 utils）
 - Ticket context
@@ -329,15 +338,15 @@ Impl Agent 是另一個隔離的 subagent。它看到的是：
 ```typescript
 // src/utils/detectShiftConflicts.ts
 
-import type { Shift, ConflictResult } from './types'
+import type { Shift, ConflictResult } from "./types"
 
-type OverlapType = 'full-overlap' | 'partial-overlap'
+type OverlapType = "full-overlap" | "partial-overlap"
 
 function getOverlapType(
   newStart: string,
   newEnd: string,
   existStart: string,
-  existEnd: string
+  existEnd: string,
 ): OverlapType | null {
   // 無交集：新班結束 <= 舊班開始，或新班開始 >= 舊班結束
   if (newEnd <= existStart || newStart >= existEnd) {
@@ -346,16 +355,13 @@ function getOverlapType(
 
   // 完全重疊：時段完全相同
   if (newStart === existStart && newEnd === existEnd) {
-    return 'full-overlap'
+    return "full-overlap"
   }
 
-  return 'partial-overlap'
+  return "partial-overlap"
 }
 
-export function detectShiftConflicts(
-  newShift: Shift,
-  existingShifts: Shift[]
-): ConflictResult[] {
+export function detectShiftConflicts(newShift: Shift, existingShifts: Shift[]): ConflictResult[] {
   return existingShifts
     .filter((existing) => existing.employeeId === newShift.employeeId)
     .reduce<ConflictResult[]>((conflicts, existing) => {
@@ -363,7 +369,7 @@ export function detectShiftConflicts(
         newShift.startTime,
         newShift.endTime,
         existing.startTime,
-        existing.endTime
+        existing.endTime,
       )
 
       if (overlapType) {
@@ -386,13 +392,13 @@ export function detectShiftConflicts(
 ✅ 6 tests passed
 ```
 
-**Subagent 隔離的實際效果**：Test Agent 寫了「邊界：結束時間等於開始時間」這個 edge case。如果是同一個 context，AI 大概率會在心裡先想好用 `<` 還是 `<=` 比較，然後「配合」自己的想法寫測試。隔離後，Test Agent 從 AC 的語義出發——「相鄰不重疊」是使用者直覺上的預期。（更多關於隔離設計的原理，見 [[從 Prompt 到系統：用 Claude Code 打造 AI 開發閉環的五層架構設計|五層架構設計]]。）
+**Subagent 隔離的實際效果**：Test Agent 寫了「邊界：結束時間等於開始時間」這個 edge case。如果是同一個 context，AI 很可能在心裡先決定用 `<` 還是 `<=` 比較，再「配合」自己的想法寫測試。隔離後，Test Agent 從 AC 的語義出發——「相鄰不重疊」是使用者直覺上的預期。（隔離設計的原理見 [[從 Prompt 到系統：用 Claude Code 打造 AI 開發閉環的五層架構設計|五層架構設計]]。）
 
 ### 插曲：AC 精確度的教訓
 
-人類 review GREEN 的實作時發現一個問題：`full-overlap` 的定義是 exact match（時段完全相同），但直覺上「完全重疊」應該包含「一個班完全涵蓋另一個班」的情況（例如 08:00-20:00 涵蓋 09:00-17:00）。
+人類 review GREEN 的實作時發現一個問題：`full-overlap` 的定義是 exact match（時段完全相同），但直覺上「完全重疊」應該也涵蓋「一個班完全包住另一個班」的情況（例如 08:00-20:00 涵蓋 09:00-17:00）。
 
-根因：AC 只寫了「回傳衝突類型（完全重疊 vs 部分重疊）」，沒有定義什麼算「完全重疊」。Test Agent 按字面理解寫了 exact match 的測試，Impl Agent 配合通過——**閉環跑完了，但產出不符預期。**
+根因：AC 只寫了「回傳衝突類型（完全重疊 vs 部分重疊）」，沒有定義什麼算「完全重疊」。Test Agent 按字面意思寫了 exact match 的測試，Impl Agent 配合通過——**閉環跑完了，但產出不符預期。**
 
 這就是為什麼 Step 2 的人類 review 如此關鍵。修正方式：回到 AC 加上明確定義（「full-overlap = 一方的時段完全被另一方涵蓋」），重新跑 RED-GREEN。第二輪 ~2 分鐘搞定。
 
@@ -433,7 +439,7 @@ describe('ConflictWarning', () => {
 })
 ```
 
-這裡出了一個小狀況：Test Agent 第一次寫的測試 import 路徑是 `'../ConflictWarning'`，但實際的組件目錄結構是 `src/components/schedule/ConflictWarning.tsx`。RED phase 跑出 `MODULE_NOT_FOUND` 而不是預期的 test failure，系統偵測到這不是正常的 RED 狀態，自動修正路徑後重跑——第二次才拿到正確的 RED（組件不存在 → test fail）。
+這裡出了一個小狀況：Test Agent 第一次寫的測試 import 路徑是 `'../ConflictWarning'`，但實際的組件目錄結構是 `src/components/schedule/ConflictWarning.tsx`。RED phase 丟出 `MODULE_NOT_FOUND` 而不是預期的 test failure，系統偵測到這不是正常的 RED 狀態，自動修正路徑後重跑——第二次才拿到正確的 RED（組件不存在 → test fail）。
 
 Impl Agent 看到 failing test 後寫出 `<ConflictWarning>`，7 項測試全數通過。整個 4702 耗時 ~7 分鐘（含那次路徑修正的重跑）。
 
@@ -469,7 +475,7 @@ Phase 5: 更新 Jira
   附帶：修改的檔案清單、branch name、測試覆蓋範圍
 ```
 
-一個 `/thes-workflow THES-4701` 指令，從讀 ticket 到 Develop Done，中間不需要人類介入。PR 建立和 code review 仍由人類發起——閉環覆蓋到「可以開 PR」的狀態，但不代替 review 流程。
+一個 `/thes-workflow THES-4701` 指令，從讀 ticket 到 Develop Done，中間不需要人類介入。PR 建立和 code review 仍由人類發起——閉環只覆蓋到「可以開 PR」的狀態，不代替 review 流程。
 
 ### THES-4703：E2E 驗證——Stuck Protocol 實戰
 
@@ -497,25 +503,30 @@ Phase 4: 驗證 Pipeline
 ## Stuck Protocol 觸發
 
 ### 已嘗試
+
 1. 直接跑 E2E → 超時（Playwright browser launch 失敗）
 2. 加 --headed 模式 → 同樣失敗
 3. npx playwright install → 權限不足
 
 ### 根因分析
+
 CI 環境缺少 Chromium dependencies。本地開發機有裝但 CI image 沒有。
 
 ### 替代方案
+
 A. 在 CI 加 `npx playwright install --with-deps`（推薦，一次性修復）
 B. 降級為 integration test，跳過 E2E（犧牲端對端覆蓋）
 C. 只在本地跑 E2E，CI 跳過（風險：CI 永遠不驗證 E2E）
 ```
+
+![[02-framework-stuck-protocol-3strike.png]]
 
 我選了方案 A，手動在 CI config 加了 Playwright 安裝步驟。系統從 Phase 4 重跑，這次全部通過。整個 THES-4703 耗時 ~12 分鐘——其中 ~5 分鐘花在 Stuck Protocol 的三次重試和人類決策上。
 
 > [!note] Stuck Protocol 的設計意圖
 > 第一次遇到 Stuck Protocol 觸發時，直覺反應是「系統壞了」。但它的設計意圖恰恰相反：**在 AI 跑不下去時，優雅地把控制權交還人類**，而不是讓 AI 無限 retry 浪費 token。三次是刻意的上限——足夠排除偶發問題，又不至於在死路上耗太久。
 
-這個「三次失敗就停」的 pattern 在 [[gstack — 把 Claude Code 變成虛擬工程團隊的開源框架|gstack]] 中也有體現——`/investigate` 的 Iron Law 和 Browse System 的 crash recovery 都採用相同的 3-strike 設計。
+這個「三次失敗就停」的 pattern 在 [[gstack — 把 Claude Code 變成虛擬工程團隊的開源框架|gstack]] 中也看得到——`/investigate` 的 Iron Law 和 Browse System 的 crash recovery 都採用相同的 3-strike 設計。
 
 ---
 
@@ -523,13 +534,15 @@ C. 只在本地跑 E2E，CI 跳過（風險：CI 永遠不驗證 E2E）
 
 ### 三個 Subtask 的執行路徑
 
-| Ticket | 內容 | 策略判定 | 隔離模式 | 耗時 |
-|--------|------|---------|---------|------|
-| THES-4701 | 衝突檢測 util | tdd-unit | 單一 context | ~4 min（含 AC 修正重跑） |
-| THES-4702 | 衝突警告 UI 組件 | tdd-integration | Subagent 隔離 | ~7 min（含路徑修正重跑） |
-| THES-4703 | 表單整合 E2E | e2e | Subagent 隔離 | ~12 min（含 Stuck Protocol） |
+![[04-framework-ticket-execution-paths.png]]
 
-策略判定自動選擇了不同的測試策略和隔離模式。簡單的純函式（4701）不需要 subagent 隔離的 overhead；涉及組件渲染和跨頁面流程的（4702、4703）自動啟用隔離。注意時間都不是一次就過的——4701 有 AC 精確度修正，4702 有 import 路徑修正，4703 觸發了 Stuck Protocol。這是常態，不是意外。
+| Ticket    | 內容             | 策略判定        | 隔離模式      | 耗時                         |
+| --------- | ---------------- | --------------- | ------------- | ---------------------------- |
+| THES-4701 | 衝突檢測 util    | tdd-unit        | 單一 context  | ~4 min（含 AC 修正重跑）     |
+| THES-4702 | 衝突警告 UI 組件 | tdd-integration | Subagent 隔離 | ~7 min（含路徑修正重跑）     |
+| THES-4703 | 表單整合 E2E     | e2e             | Subagent 隔離 | ~12 min（含 Stuck Protocol） |
+
+策略判定為三張 ticket 選了不同的測試策略和隔離模式。簡單的純函式（4701）不需要 subagent 隔離的 overhead；涉及組件渲染和跨頁面流程的（4702、4703）才啟用隔離。注意時間都不是一次就過的——4701 有 AC 精確度修正，4702 有 import 路徑修正，4703 觸發了 Stuck Protocol。這是常態，不是意外。
 
 ### Context 流動追蹤
 
@@ -552,11 +565,13 @@ flowchart LR
 
 ### AC 品質決定測試品質
 
-這點在 THES-4701 的 `full-overlap` 定義歧義中已經親身體驗。更廣泛地說：**AC 是整個閉環的瓶頸**。explore 和 propose 階段的品質，直接決定後續 TDD 的效率。如果 AC 只寫「檢查衝突」而沒定義什麼算衝突，Test Agent 會猜，猜錯就要回頭修——閉環仍然能跑完，但多繞一圈。
+![[03-comparison-ac-quality.png]]
+
+這點在 THES-4701 的 `full-overlap` 定義歧義中已經親身體驗。更廣泛地說：**AC 是整個閉環的瓶頸**。explore 和 propose 階段的品質，直接決定後續 TDD 的效率。如果 AC 只寫「檢查衝突」而沒定義什麼算衝突，Test Agent 會用猜的，猜錯就要回頭修——閉環仍然跑得完，只是多繞一圈。
 
 ### Stuck Protocol 是功能，不是故障
 
-THES-4703 的 E2E 測試觸發了 Stuck Protocol（詳見 Step 5）。這裡補充一個更微妙的觀察：Stuck Protocol 觸發後，AI 提供的三個替代方案品質差異很大。方案 A（CI 加安裝步驟）是正解，但方案 C（CI 跳過 E2E）是一個危險的 trade-off——如果無腦接受 AI 推薦的第一個方案，不一定是最好的。**人類在 Stuck Protocol 中的角色不只是「選一個」，而是「評估 trade-off」。**
+THES-4703 的 E2E 測試觸發了 Stuck Protocol（詳見 Step 5）。這裡補充一個更微妙的觀察：Stuck Protocol 觸發後，AI 給的三個替代方案品質落差很大。方案 A（CI 加安裝步驟）是正解，但方案 C（CI 跳過 E2E）其實是個危險的 trade-off——不假思索接受 AI 推薦的第一個方案，不一定是最好的。**人類在 Stuck Protocol 中的角色不只是「選一個」，而是「評估 trade-off」。**
 
 ### 什麼場景不該用閉環
 
