@@ -54,9 +54,24 @@ npm run test                 # tsx --test
 - 人工撰寫的文章才放在分類資料夾中
 - 原因：避免 AI 內容汙染 Graph View、搜尋結果和 backlinks
 
-### 圖表
+### 圖檔（光柵圖 PNG/JPG/SVG）
 
-Mermaid 與 Excalidraw 撰寫規範見 `.claude/rules/diagrams.md`。
+| 規則 | 說明 |
+|------|------|
+| 位置 | **一律放 `content/images/`** 共享資料夾，不要在文章資料夾下建 `imgs/` 或 `attachments/` 子資料夾 |
+| 引用語法 | **用 Obsidian wikilink `![[01-framework-name.png]]`**，不要用標準 markdown `![alt](images/01-framework-name.png)` |
+| 檔名 | `NN-{type}-{slug}.png`（例：`01-framework-subagent-isolation.png`），與 baoyu-article-illustrator 預設一致 |
+
+原因：
+- Quartz 從 Obsidian vault 出版，wikilink 是專案統一語法；標準 markdown image path 在 Quartz 解析會失敗、圖不顯示
+- 在文章資料夾建 `imgs/` 子目錄會被 Quartz 當成新分類資料夾跑進 Explorer 側邊欄（`ignorePatterns` 沒列）
+- 共享 `content/images/` 讓檔名 grep、Excalidraw 自動匯出、backlink 索引都能找到圖
+
+**baoyu-article-illustrator 使用注意**：該 skill 預設輸出到 `{article-dir}/imgs/`，**生圖後必須把 PNG 搬到 `content/images/` 並刪掉 imgs 資料夾**，markdown 引用同步改為 wikilink 語法。
+
+### 圖表（向量圖 Mermaid / Excalidraw）
+
+撰寫規範見 `.claude/rules/diagrams.md`。
 
 ## Architecture
 
