@@ -14,6 +14,9 @@ draft: false
 status: published
 ---
 
+> [!note] 同名概念釐清
+> 本文的「Subagent」指 Test Agent / Implementation Agent 的 context 隔離；另見 [[AI E2E 測試實戰：用 Claude Code 平行代理同時操控三個瀏覽器驗證你的網站]] 中相同詞但指 Playwright 平行代理。
+
 > [!info] 「五層」是什麼層？
 > 本文的「五層」指**載入時機**（CLAUDE.md → Commands → Skills → Rules → Standards 的縱向堆疊）。若你想看「同一層內容該怎麼分類」（Rule 護欄 / Memory 經驗 / Skill SOP 的橫向歸屬），見姊妹篇 [[Claude Code Prompt 分層設計原則：Rule、Memory、Skill 各該放什麼？|Prompt 三層分層設計]]。
 
@@ -39,13 +42,13 @@ status: published
 
 整套系統由五個 layer 組成，從「每次 session 自動載入」到「被引用時才讀取」形成一個 context 載入的 spectrum：
 
-| Layer | 機制 | 觸發方式 | 類比 |
-|-------|------|---------|------|
-| **1. CLAUDE.md** | 專案入口 | Session 自動載入 | README |
-| **2. Commands** | 工作流指令 | 手動 `/command` | Makefile |
-| **3. Skills** | SDLC 結構化流程 | 按需觸發 | SOP 手冊 |
-| **4. Rules** | Domain 領域規範 | 檔案路徑自動載入 | ESLint config |
-| **5. Standards** | 標準文件 | 被 Skills/Rules 引用 | RFC / ADR |
+| Layer            | 機制            | 觸發方式             | 類比          |
+| ---------------- | --------------- | -------------------- | ------------- |
+| **1. CLAUDE.md** | 專案入口        | Session 自動載入     | README        |
+| **2. Commands**  | 工作流指令      | 手動 `/command`      | Makefile      |
+| **3. Skills**    | SDLC 結構化流程 | 按需觸發             | SOP 手冊      |
+| **4. Rules**     | Domain 領域規範 | 檔案路徑自動載入     | ESLint config |
+| **5. Standards** | 標準文件        | 被 Skills/Rules 引用 | RFC / ADR     |
 
 每一層的設計原則不同：
 
@@ -177,11 +180,11 @@ Phase 1 的策略判定是自動化的——根據 ticket type（Bug/Story/Task�
 
 Skills 按三種類型設計：
 
-| 類型 | Skills | 特點 |
-|------|--------|------|
-| **Workflow 型** | feature-dev, bugfix, refactor, test-writing, playwright-regression | 多步驟流程，有明確的 phase |
-| **Checklist 型** | code-review | 8 點檢查清單，逐項審查 |
-| **Operation 型** | jira-ops | CRUD 操作，建單/查詢/轉狀態 |
+| 類型             | Skills                                                             | 特點                        |
+| ---------------- | ------------------------------------------------------------------ | --------------------------- |
+| **Workflow 型**  | feature-dev, bugfix, refactor, test-writing, playwright-regression | 多步驟流程，有明確的 phase  |
+| **Checklist 型** | code-review                                                        | 8 點檢查清單，逐項審查      |
+| **Operation 型** | jira-ops                                                           | CRUD 操作，建單/查詢/轉狀態 |
 
 每個 skill 只載入 name + description 到 context（~100 tokens），完整的 SKILL.md 只在被調用時才展開。七個 skills 的「待機成本」僅 ~700 tokens。
 
@@ -206,20 +209,24 @@ Skills 按三種類型設計：
 ![[claude-code-subagent-isolation.excalidraw]]
 
 **Test Agent（RED phase）** 的 context 包含：
+
 - Ticket 的 Acceptance Criteria
 - 現有測試的 pattern 和慣例
 - test-writing skill 的指引
 
 **Test Agent 看不到的：**
+
 - 任何實作想法或方向
 - Source code（實作檔案）
 
 **Impl Agent（GREEN phase）** 的 context 包含：
+
 - Test Agent 產出的 failing tests
 - 相關的 source code
 - Ticket context
 
 **Impl Agent 看不到的：**
+
 - Test Agent 的推理過程
 - Mock 策略和 test setup 細節
 
@@ -227,11 +234,11 @@ Skills 按三種類型設計：
 
 ### 與人類 TDD 的對比
 
-| | 人類 TDD | AI TDD（單一 context） | AI TDD（隔離 subagent） |
-|---|---------|----------------------|------------------------|
-| 隔離機制 | 紀律 | 無 | Context boundary |
-| Bias 風險 | 中（人會偷看） | 高（同一腦袋） | 低（物理隔離） |
-| 測試基礎 | AC（理想情況） | 實作草圖 | AC（強制） |
+|           | 人類 TDD       | AI TDD（單一 context） | AI TDD（隔離 subagent） |
+| --------- | -------------- | ---------------------- | ----------------------- |
+| 隔離機制  | 紀律           | 無                     | Context boundary        |
+| Bias 風險 | 中（人會偷看） | 高（同一腦袋）         | 低（物理隔離）          |
+| 測試基礎  | AC（理想情況） | 實作草圖               | AC（強制）              |
 
 Subagent 隔離的 overhead 是兩次 context 建立（多約 30 秒），但換來的是測試品質的根本保障。這不是 premature optimization——這是我在多次發現「測試通過但行為不對」後做出的設計決策。
 
@@ -281,15 +288,15 @@ flowchart LR
 
 七個 domain rules 各控制在 30-60 行，每個用最適合其 domain 的表達模式：
 
-| Rule | 路徑觸發 | 內容模式 |
-|------|---------|---------|
-| react-components | `src/components/**`, `src/pages/**` | Decision tree（該用哪種組件模式？） |
-| api-hooks | `src/hooks/api/**`, `src/api/**` | Architecture diagram（三層錯誤處理） |
-| state-management | `src/lib/jotai/**`, `src/providers/**` | Strategy table（何時用哪種 atom？） |
-| testing | `**/*.test.ts(x)`, `e2e/**` | Strategy table（哪種測試層級？） |
-| routing | `src/routes/**` | Checklist（路由設計檢查項） |
-| styling | `**/*.css`, `tailwind.config.*` | Priority ordering（Tailwind 優先序） |
-| i18n | `public/locales/**` | Prescriptive rules（key 命名規範） |
+| Rule             | 路徑觸發                               | 內容模式                             |
+| ---------------- | -------------------------------------- | ------------------------------------ |
+| react-components | `src/components/**`, `src/pages/**`    | Decision tree（該用哪種組件模式？）  |
+| api-hooks        | `src/hooks/api/**`, `src/api/**`       | Architecture diagram（三層錯誤處理） |
+| state-management | `src/lib/jotai/**`, `src/providers/**` | Strategy table（何時用哪種 atom？）  |
+| testing          | `**/*.test.ts(x)`, `e2e/**`            | Strategy table（哪種測試層級？）     |
+| routing          | `src/routes/**`                        | Checklist（路由設計檢查項）          |
+| styling          | `**/*.css`, `tailwind.config.*`        | Priority ordering（Tailwind 優先序） |
+| i18n             | `public/locales/**`                    | Prescriptive rules（key 命名規範）   |
 
 零配置的好處是：**開發者不需要知道 rules 的存在就能受益。** 你只管編輯檔案，對的規範就會在對的時候出現在 AI 的 context 裡。
 
@@ -331,9 +338,9 @@ stateDiagram-v2
 
 系統用兩個 Claude Code hooks 加固流程：
 
-| Hook | 觸發事件 | 行為 |
-|------|---------|------|
-| `post-edit-lint.sh` | 每次 Edit/Write | 對修改的檔案跑 ESLint --fix，即時回饋 |
+| Hook                 | 觸發事件                | 行為                                   |
+| -------------------- | ----------------------- | -------------------------------------- |
+| `post-edit-lint.sh`  | 每次 Edit/Write         | 對修改的檔案跑 ESLint --fix，即時回饋  |
 | `pre-stop-verify.sh` | Claude 嘗試結束 session | 檢查 workflow marker，若存在則阻止結束 |
 
 **Workflow marker 機制：** `/thes-workflow` 開始時在 `/tmp/` 建立一個 marker 檔案，完成後刪除。如果 AI 在驗證 pipeline 跑完前嘗試結束 session，pre-stop hook 會攔截並要求完成驗證。這防止了 AI 在遇到困難時「偷偷結束對話」。
@@ -348,12 +355,12 @@ stateDiagram-v2
 
 ### 四個執行模式
 
-| 模式 | 場景 | 行為 |
-|------|------|------|
-| **scaffold** | 全新專案 | 從零建立完整骨架 |
-| **augment** | 有部分規範 | 補齊缺失的部分 |
-| **patch** | 規範已完整 | 更新過時的內容 |
-| **audit** | 任何時候 | 只掃描不修改，產出差距報告 |
+| 模式         | 場景       | 行為                       |
+| ------------ | ---------- | -------------------------- |
+| **scaffold** | 全新專案   | 從零建立完整骨架           |
+| **augment**  | 有部分規範 | 補齊缺失的部分             |
+| **patch**    | 規範已完整 | 更新過時的內容             |
+| **audit**    | 任何時候   | 只掃描不修改，產出差距報告 |
 
 ### Discovery Phase
 
@@ -368,11 +375,11 @@ scaffold-rules 的第一步是自動偵測專案技術棧：
 
 ### 框架支援分級
 
-| 等級 | 框架 | 產出 |
-|------|------|------|
-| **Full** | React, Next.js | 完整 7 rules + 7 skills |
-| **Partial** | Vue, Angular, Svelte | 5 rules + 5 skills（core SDLC） |
-| **Generic** | Vanilla JS, 其他 | 3-4 rules + 5 skills（framework-agnostic） |
+| 等級        | 框架                 | 產出                                       |
+| ----------- | -------------------- | ------------------------------------------ |
+| **Full**    | React, Next.js       | 完整 7 rules + 7 skills                    |
+| **Partial** | Vue, Angular, Svelte | 5 rules + 5 skills（core SDLC）            |
+| **Generic** | Vanilla JS, 其他     | 3-4 rules + 5 skills（framework-agnostic） |
 
 動態路徑解析是另一個設計重點——scaffold-rules 不硬編碼路徑（如 `src/components/`），而是掃描實際目錄結構來決定 rules 的 `paths:` 值。這避免了「模板跟實際專案結構不符」的問題。
 
@@ -384,14 +391,14 @@ scaffold-rules 的第一步是自動偵測專案技術棧：
 
 五層架構的 context 消耗比想像中少：
 
-| 層級 | Token 成本 | 說明 |
-|------|-----------|------|
-| CLAUDE.md | ~800 | 固定，每次 session |
-| Commands | 0 | 只在手動觸發時載入 |
-| Skills (7 個) | ~700 | 待機狀態只有 name + description |
-| Rules (0-2 個) | ~200-600 | 只載入匹配路徑的 rules |
-| Standards | 0 | 只在被引用時 Read |
-| **典型 session 總計** | **~1,500-2,100** | 遠低於把所有文件塞進 CLAUDE.md |
+| 層級                  | Token 成本       | 說明                            |
+| --------------------- | ---------------- | ------------------------------- |
+| CLAUDE.md             | ~800             | 固定，每次 session              |
+| Commands              | 0                | 只在手動觸發時載入              |
+| Skills (7 個)         | ~700             | 待機狀態只有 name + description |
+| Rules (0-2 個)        | ~200-600         | 只載入匹配路徑的 rules          |
+| Standards             | 0                | 只在被引用時 Read               |
+| **典型 session 總計** | **~1,500-2,100** | 遠低於把所有文件塞進 CLAUDE.md  |
 
 ### Subagent 隔離的 Overhead
 
@@ -443,3 +450,6 @@ Standards 層作為 single source of truth，修改只需改一處。Rules 和 S
 - [[Claude Code 系統提示詞架構優化：從 Always-Load 到按需載入|系統提示詞按需載入]] — 本文的前篇，記錄從 16 個 @ import 重構到四層載入的過程
 - [Claude Code Documentation](https://docs.anthropic.com/en/docs/claude-code) — 官方文件，Skills / Rules / Commands 的完整說明
 - [[AI E2E 測試實戰：用 Claude Code 平行代理同時操控三個瀏覽器驗證你的網站|AI E2E 測試實戰]] — Agent tool 平行派發的實戰應用：同時操控多個瀏覽器做 e2e 測試
+- [[AI 軟體工程工作流 2026：從 Spec-Driven 到 Superpowers 的實戰指南|AI 工作流 2026]] — 方法論姊妹篇，從 Spec-Driven 視角看六大主流工作流
+- [[Superpowers-OpenSpec-兩個抽象層]] — Superpowers 框架定位與兩抽象層的協作模型
+- [[從工單到 PR：用 Jira × Claude Code × Git Worktree 跑一條紀律化的接單流程|從工單到 PR]] — Standards 層在 Jira 工單標準化的實戰

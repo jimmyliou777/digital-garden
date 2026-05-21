@@ -8,6 +8,9 @@ draft: false
 status: published
 ---
 
+> [!note] 同名概念釐清
+> 本文的「隔離」指 React runtime 多版本共存的版本隔離；另見 [[微前端組件化方案指標評比]] 中相同詞但指微前端方案的執行環境隔離。
+
 **TL;DR：** 透過 NPM 別名並存兩版 React，用 Lit Web Component 建立隔離邊界，再搭配 React.lazy 按需載入，解決 React 19 專案需要渲染 React 18 元件的版本衝突問題。初始載入零額外成本。
 
 > 目標讀者：前端架構師、資深前端工程師。核心技術：React 19 & 18, Lit, Web Components, NPM Package Aliasing, React.lazy。
@@ -16,7 +19,7 @@ status: published
 
 ## 核心策略：以 Web Component 為隔離邊界
 
-我們的核心策略是**避免直接依賴，建立隔離邊界**。我們不在 React 19 的程式碼中直接 `import` 任何 React 18 的元件，而是建立一個 Lit Web Component (`<lit-react18-wrapper>`) 作為中介層。
+我們的核心策略是**避免直接依賴，建立隔離邊界**。我們不在 React 19 的程式碼中直接 `import` 任何 React 18 的元件，而是建立一個 Lit Web Component (`<lit-react18-wrapper>`) 作為中介層。此策略在微前端方案中的定位見 [[微前端組件化方案指標評比]]。
 
 ```mermaid
 flowchart LR
@@ -41,107 +44,106 @@ flowchart LR
 傳統的 `npm install` 無法讓我們在同一個專案中並存兩個版本的 `react`。為此，我們必須使用 **NPM 套件別名（Package Aliasing）**。
 
 1. 安裝依賴:
-    
-    在 React 19 專案根目錄下，執行以下指令，將 React 18 版本安裝並賦予別名。
-    
-    ```bash
-    # 將 react@18 安裝為 react-v18
-    npm install react-v18@npm:react@18
-    
-    # 將 react-dom@18 安裝為 react-dom-v18
-    npm install react-dom-v18@npm:react-dom@18
-    ```
-    
-    `package.json` 將會包含主應用使用的 `react@19` 和我們指定的 `react-v18`。
-    
-2. 建立 Lit 封裝層:
-    
-    這是我們隔離策略的核心。建立一個 Lit 元件，並在其中明確地從別名套件引入 React 18。
-    
-    **`lit-react18-wrapper.js`**
 
-    ```javascript
-    import { LitElement, html } from 'lit';
-    
-    // 關鍵：從別名套件中引入 React 18 實例
-    import React_v18 from 'react-v18';
-    import { createRoot } from 'react-dom-v18/client';
-    
-    // 假設這是需要被渲染的舊版元件
-    const LegacyButton = ({ label, onClick }) => {
-      // 這個 JSX 將由 React 18 runtime 處理
-      return React_v18.createElement(
-        'button',
-        {
-          onClick,
-          style: {
-            padding: '12px 20px',
-            fontSize: '16px',
-            backgroundColor: '#FF6347', // Tomato color
-            color: 'white',
-            border: 'none',
-            borderRadius: '8px',
-            cursor: 'pointer',
-          },
-        },
-        label
-      );
-    };
-    
-    export class LitReact18Wrapper extends LitElement {
-      static properties = {
-        label: { type: String },
-      };
-    
-      constructor() {
-        super();
-        this._react18Root = null;
-      }
-    
-      // 建立一個讓 React 18 掛載的容器
-      render() {
-        return html`<div id="react18-container"></div>`;
-      }
-    
-      // 當 Lit 元件掛載後，初始化 React 18 環境
-      firstUpdated() {
-        const container = this.shadowRoot.querySelector('#react18-container');
-        this._react18Root = createRoot(container);
-        this._renderReact18Component();
-      }
-    
-      // 當外部傳入的屬性改變時，更新內部的 React 18 元件
-      updated() {
-        this._renderReact18Component();
-      }
-    
-      // 當 Lit 元件從 DOM 移除時，安全地卸載 React 18，防止記憶體洩漏
-      disconnectedCallback() {
-        super.disconnectedCallback();
-        this._react18Root?.unmount();
-      }
-    
-      // 將 React 的事件轉換為標準的 DOM CustomEvent
-      _handleButtonClick = () => {
-        this.dispatchEvent(new CustomEvent('onButtonClick', { bubbles: true, composed: true }));
-      };
-    
-      _renderReact18Component() {
-        if (!this._react18Root) return;
-    
-        // 使用 React.createElement 確保我們使用的是正確的 React 實例
-        const component = React_v18.createElement(LegacyButton, {
-          label: this.label,
-          onClick: this._handleButtonClick,
-        });
-    
-        this._react18Root.render(component);
-      }
-    }
-    
-    customElements.define('lit-react18-wrapper', LitReact18Wrapper);
-    ```
-    
+   在 React 19 專案根目錄下，執行以下指令，將 React 18 版本安裝並賦予別名。
+
+   ```bash
+   # 將 react@18 安裝為 react-v18
+   npm install react-v18@npm:react@18
+
+   # 將 react-dom@18 安裝為 react-dom-v18
+   npm install react-dom-v18@npm:react-dom@18
+   ```
+
+   `package.json` 將會包含主應用使用的 `react@19` 和我們指定的 `react-v18`。
+
+2. 建立 Lit 封裝層:
+
+   這是我們隔離策略的核心。建立一個 Lit 元件，並在其中明確地從別名套件引入 React 18。
+
+   **`lit-react18-wrapper.js`**
+
+   ```javascript
+   import { LitElement, html } from "lit"
+
+   // 關鍵：從別名套件中引入 React 18 實例
+   import React_v18 from "react-v18"
+   import { createRoot } from "react-dom-v18/client"
+
+   // 假設這是需要被渲染的舊版元件
+   const LegacyButton = ({ label, onClick }) => {
+     // 這個 JSX 將由 React 18 runtime 處理
+     return React_v18.createElement(
+       "button",
+       {
+         onClick,
+         style: {
+           padding: "12px 20px",
+           fontSize: "16px",
+           backgroundColor: "#FF6347", // Tomato color
+           color: "white",
+           border: "none",
+           borderRadius: "8px",
+           cursor: "pointer",
+         },
+       },
+       label,
+     )
+   }
+
+   export class LitReact18Wrapper extends LitElement {
+     static properties = {
+       label: { type: String },
+     }
+
+     constructor() {
+       super()
+       this._react18Root = null
+     }
+
+     // 建立一個讓 React 18 掛載的容器
+     render() {
+       return html`<div id="react18-container"></div>`
+     }
+
+     // 當 Lit 元件掛載後，初始化 React 18 環境
+     firstUpdated() {
+       const container = this.shadowRoot.querySelector("#react18-container")
+       this._react18Root = createRoot(container)
+       this._renderReact18Component()
+     }
+
+     // 當外部傳入的屬性改變時，更新內部的 React 18 元件
+     updated() {
+       this._renderReact18Component()
+     }
+
+     // 當 Lit 元件從 DOM 移除時，安全地卸載 React 18，防止記憶體洩漏
+     disconnectedCallback() {
+       super.disconnectedCallback()
+       this._react18Root?.unmount()
+     }
+
+     // 將 React 的事件轉換為標準的 DOM CustomEvent
+     _handleButtonClick = () => {
+       this.dispatchEvent(new CustomEvent("onButtonClick", { bubbles: true, composed: true }))
+     }
+
+     _renderReact18Component() {
+       if (!this._react18Root) return
+
+       // 使用 React.createElement 確保我們使用的是正確的 React 實例
+       const component = React_v18.createElement(LegacyButton, {
+         label: this.label,
+         onClick: this._handleButtonClick,
+       })
+
+       this._react18Root.render(component)
+     }
+   }
+
+   customElements.define("lit-react18-wrapper", LitReact18Wrapper)
+   ```
 
 ---
 
@@ -154,81 +156,88 @@ flowchart LR
 我們的策略是將這個「昂貴」的 Web Component（及其整個 React 18 依賴樹）從主打包檔案中分離出去，只在使用者真正需要時才非同步載入。`React.lazy` 是實現此目標的標準工具。
 
 1. 建立 Web Component 的載入器:
-    
-    為了配合 React.lazy，我們需要一個模組來觸發 Web Component 的註冊 (customElements.define)。
-    
-    **`lazy-loader.js`**
 
-    ```javascript
-    // 此檔案的唯一作用就是執行一次 Web Component 的定義檔
-    import './lit-react18-wrapper.js';
-    ```
-    
+   為了配合 React.lazy，我們需要一個模組來觸發 Web Component 的註冊 (customElements.define)。
+
+   **`lazy-loader.js`**
+
+   ```javascript
+   // 此檔案的唯一作用就是執行一次 Web Component 的定義檔
+   import "./lit-react18-wrapper.js"
+   ```
+
 2. 建立一個可被延遲載入的 React 包裝器:
-    
-    我們使用 @lit-labs/react 的 createComponent 來為 Web Component 建立一個符合人體工學的 React 介面。
-    
-    **`WrappedReact18Button.jsx`**
 
-    ```jsx
-    import React from 'react';
-    import { createComponent } from '@lit-labs/react';
-    
-    // 這個 React 是 v19
-    const WrappedComponent = createComponent({
-      react: React,
-      tagName: 'lit-react18-wrapper',
-      events: {
-        onClick: 'onButtonClick',
-      },
-    });
-    
-    export default WrappedComponent;
-    ```
-    
+   我們使用 @lit-labs/react 的 createComponent 來為 Web Component 建立一個符合人體工學的 React 介面（Lit 元件包裝模式詳見 [[使用 Lit 開發 Web Components 並整合至 React 專案]]）。
+
+   **`WrappedReact18Button.jsx`**
+
+   ```jsx
+   import React from "react"
+   import { createComponent } from "@lit-labs/react"
+
+   // 這個 React 是 v19
+   const WrappedComponent = createComponent({
+     react: React,
+     tagName: "lit-react18-wrapper",
+     events: {
+       onClick: "onButtonClick",
+     },
+   })
+
+   export default WrappedComponent
+   ```
+
 3. 在主應用中動態載入:
-    
-    在主應用中，使用 React.lazy 和 <Suspense> 來消費這個元件。
-    
-    **`App.jsx` (React 19)**
 
-    ```jsx
-    import React, { useState, Suspense } from 'react';
-    
-    // 透過 React.lazy 動態載入，打包工具會將其分離成獨立 chunk
-    const LazyReact18Button = React.lazy(() => 
-      // 1. 先執行 Web Component 的註冊
-      import('./lazy-loader.js').then(() => 
-        // 2. 再匯入 React 的包裝器元件
-        import('./WrappedReact18Button.jsx')
-      )
-    );
-    
-    function App() {
-      const [showLegacyComponent, setShowLegacyComponent] = useState(false);
-    
-      return (
-        <div style={{ fontFamily: 'sans-serif', padding: '2em' }}>
-          <h1>React 19 Host Application</h1>
-          <button onClick={() => setShowLegacyComponent(true)}>
-            Load Legacy React 18 Component
-          </button>
-    
-          <div style={{ marginTop: '2em', padding: '1em', border: '1px dashed #ccc', minHeight: '100px' }}>
-            {showLegacyComponent && (
-              <Suspense fallback={<div>⌛️ Loading component with React 18...</div>}>
-                <LazyReact18Button
-                  label="I am a lazy-loaded v18 component"
-                  onClick={() => alert('Event received by React 19!')}
-                />
-              </Suspense>
-            )}
-          </div>
-        </div>
-      );
-    }
-    ```
-    
+   在主應用中，使用 React.lazy 和 <Suspense> 來消費這個元件。
+
+   **`App.jsx` (React 19)**
+
+   ```jsx
+   import React, { useState, Suspense } from "react"
+
+   // 透過 React.lazy 動態載入，打包工具會將其分離成獨立 chunk
+   const LazyReact18Button = React.lazy(() =>
+     // 1. 先執行 Web Component 的註冊
+     import("./lazy-loader.js").then(
+       () =>
+         // 2. 再匯入 React 的包裝器元件
+         import("./WrappedReact18Button.jsx"),
+     ),
+   )
+
+   function App() {
+     const [showLegacyComponent, setShowLegacyComponent] = useState(false)
+
+     return (
+       <div style={{ fontFamily: "sans-serif", padding: "2em" }}>
+         <h1>React 19 Host Application</h1>
+         <button onClick={() => setShowLegacyComponent(true)}>
+           Load Legacy React 18 Component
+         </button>
+
+         <div
+           style={{
+             marginTop: "2em",
+             padding: "1em",
+             border: "1px dashed #ccc",
+             minHeight: "100px",
+           }}
+         >
+           {showLegacyComponent && (
+             <Suspense fallback={<div>⌛️ Loading component with React 18...</div>}>
+               <LazyReact18Button
+                 label="I am a lazy-loaded v18 component"
+                 onClick={() => alert("Event received by React 19!")}
+               />
+             </Suspense>
+           )}
+         </div>
+       </div>
+     )
+   }
+   ```
 
 **優化結果**：
 

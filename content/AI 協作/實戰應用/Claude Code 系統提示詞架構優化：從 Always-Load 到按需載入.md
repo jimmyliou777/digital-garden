@@ -50,12 +50,12 @@ Session 啟動
 
 ### 成本對照表
 
-| 機制 | 載入時機 | 每 session 成本 |
-|------|---------|----------------|
-| `@path` in CLAUDE.md | 啟動時展開 | 全額（檔案大小） |
-| `.claude/rules/` + `paths:` | 編輯匹配檔案時 | 按需（~100-200 tokens/rule） |
-| `.claude/skills/` | 啟動時只載 metadata | ~100 tokens/skill |
-| 純路徑文字（無 `@`） | Claude 主動 Read | 0（啟動時） |
+| 機制                        | 載入時機            | 每 session 成本              |
+| --------------------------- | ------------------- | ---------------------------- |
+| `@path` in CLAUDE.md        | 啟動時展開          | 全額（檔案大小）             |
+| `.claude/rules/` + `paths:` | 編輯匹配檔案時      | 按需（~100-200 tokens/rule） |
+| `.claude/skills/`           | 啟動時只載 metadata | ~100 tokens/skill            |
+| 純路徑文字（無 `@`）        | Claude 主動 Read    | 0（啟動時）                  |
 
 **關鍵洞察**：`@` import 和沒有 `paths:` frontmatter 的 rules 都是 always loaded。只有帶 `paths:` 的 rules、skills metadata、和純路徑文字才是真正的按需載入。
 
@@ -74,12 +74,12 @@ Session 啟動
 ```markdown
 ## Key Documentation
 
-| Topic                               | File                                    |
-| ----------------------------------- | --------------------------------------- |
-| Jotai patterns & structural sharing | @src/lib/jotai/README.md                |
-| Error handling flow                 | @docs/standards/error-handling-guide.md |
+| Topic                               | File                                       |
+| ----------------------------------- | ------------------------------------------ |
+| Jotai patterns & structural sharing | @src/lib/jotai/README.md                   |
+| Error handling flow                 | @docs/standards/error-handling-guide.md    |
 | DayTimeline drag/stretch BDD        | @docs/daytimeline-workslots-bdd.feature.md |
-| ...（共 12 個 @ 引用）              |                                         |
+| ...（共 12 個 @ 引用）              |                                            |
 ```
 
 每次啟動 session，這 12 個檔案的**完整內容**都會出現在 system-reminder 中。其中 BDD spec 有 54KB、error handling guide 有 35KB，即使你只是要問一個 CSS 問題也會全部載入。
@@ -91,15 +91,16 @@ Session 啟動
 
 IMPORTANT: Read the relevant file below before starting related work.
 
-| Topic                               | File                                          |
-| ----------------------------------- | --------------------------------------------- |
-| Jotai patterns & structural sharing | src/lib/jotai/README.md                       |
-| Error handling flow                 | docs/standards/error-handling-guide.md         |
-| DayTimeline drag/stretch BDD        | docs/daytimeline-workslots-bdd.feature.md      |
-| ...                                 |                                               |
+| Topic                               | File                                      |
+| ----------------------------------- | ----------------------------------------- |
+| Jotai patterns & structural sharing | src/lib/jotai/README.md                   |
+| Error handling flow                 | docs/standards/error-handling-guide.md    |
+| DayTimeline drag/stretch BDD        | docs/daytimeline-workslots-bdd.feature.md |
+| ...                                 |                                           |
 ```
 
 差異只有兩點：
+
 1. 移除所有 `@` 前綴
 2. 加入 `IMPORTANT` 提示引導 Claude 主動讀取
 
@@ -115,7 +116,6 @@ paths:
   - "src/components/**"
   - "src/pages/**"
 ---
-
 # React 元件規範
 
 ## 組件選擇決策樹
@@ -133,11 +133,11 @@ paths:
 
 ### Token 節省估算
 
-| 指標 | Before | After |
-|------|--------|-------|
-| 每 session 自動載入文件數 | 12 個完整檔案 | 0 個 |
-| 啟動 context 消耗 | ~15,000+ tokens | ~800 tokens |
-| 每月節省（假設 100 sessions） | — | ~1.2M tokens |
+| 指標                          | Before          | After        |
+| ----------------------------- | --------------- | ------------ |
+| 每 session 自動載入文件數     | 12 個完整檔案   | 0 個         |
+| 啟動 context 消耗             | ~15,000+ tokens | ~800 tokens  |
+| 每月節省（假設 100 sessions） | —               | ~1.2M tokens |
 
 ---
 
@@ -206,3 +206,11 @@ Anthropic 的 Claude Code Best Practices 文件明確指出：
 
 - [[AI 代理工作流實戰：從模糊需求到 Develop Done 的完整閉環|AI 代理工作流實戰]] — Skills 層（Layer 3）封裝了完整的 TDD 閉環，是按需載入的實戰案例
 - [[gstack — 把 Claude Code 變成虛擬工程團隊的開源框架|gstack 框架]] — gstack 的 preamble-tier 系統是另一種分層載入的設計
+
+> [!note] 相關閱讀
+>
+> - [[Claude Code Rules 層：Path-Based 自動載入的零配置設計|Rules 層]] — 路徑載入機制
+> - [[Claude Code Skills 層：SDLC 結構化流程的按需觸發機制|Skills 層]] — 按需觸發機制
+> - [[CLAUDE.md 專案入口層：Session 自動載入的設計哲學|CLAUDE.md 入口層]] — 入口層哲學
+> - [[Claude Code Prompt 分層設計原則：Rule、Memory、Skill 各該放什麼？|Prompt 分層設計]] — 內容歸屬
+> - [[從 Prompt 到系統：用 Claude Code 打造 AI 開發閉環的五層架構設計|五層架構]] — 整體框架

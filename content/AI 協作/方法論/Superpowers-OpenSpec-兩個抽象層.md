@@ -34,15 +34,15 @@ OpenSpec 防的是「需求只活在 chat 紀錄」，Superpowers 防的是「AI
 
 ## 互補的弱點
 
-| Superpowers 缺什麼 | OpenSpec 補什麼 |
-|---|---|
+| Superpowers 缺什麼                         | OpenSpec 補什麼                       |
+| ------------------------------------------ | ------------------------------------- |
 | Plan file 是 ephemeral，merge 後沒長期脈絡 | `archive/` 永久保留 proposal / design |
-| Brainstorm 結果只在對話、換 session 就丟 | `proposal.md` 持久化商業理由 |
+| Brainstorm 結果只在對話、換 session 就丟   | `proposal.md` 持久化商業理由          |
 
-| OpenSpec 缺什麼 | Superpowers 補什麼 |
-|---|---|
-| 沒強制 TDD（`/opsx:apply` 可能跳過測試） | `test-driven-development` skill |
-| 不管 worktree 隔離與平行化 | `using-git-worktrees` + `dispatching-parallel-agents` |
+| OpenSpec 缺什麼                          | Superpowers 補什麼                                    |
+| ---------------------------------------- | ----------------------------------------------------- |
+| 沒強制 TDD（`/opsx:apply` 可能跳過測試） | `test-driven-development` skill                       |
+| 不管 worktree 隔離與平行化               | `using-git-worktrees` + `dispatching-parallel-agents` |
 
 組合的價值：OpenSpec 補 Superpowers 的「規格持久性 + 商業脈絡」，Superpowers 補 OpenSpec 的「執行紀律 + 平行化 + 驗證」。
 
@@ -79,3 +79,8 @@ Refactor
 - **Superpowers 的價值在實作中**：TDD、verification、平行化決定了單次任務的品質。
 
 組合的具體場景，[[Superpowers-OpenSpec-OAuth2-8階段實戰]] 用 OAuth2 案例走完 8 階段流程，並列出 6 個常見陷阱。
+
+## 延伸閱讀
+
+- [[OpenSpec 使用指南：Spec-Driven 開發工作流|OpenSpec 使用指南]] — OpenSpec 純工具使用層的實務指南
+- [[從 Prompt 到系統：用 Claude Code 打造 AI 開發閉環的五層架構設計|五層架構設計]] — 另一種分層視角的方法論姊妹篇

@@ -7,6 +7,9 @@ draft: false
 status: evergreen
 ---
 
+> [!note] 同名概念釐清
+> 本文的「Skill」指 Claude Code 官方 SKILL.md 機制；另見 [[gstack — 把 Claude Code 變成虛擬工程團隊的開源框架]] 中相同詞但指 gstack 的 23+8 角色化 prompt 套件。
+
 ## 是什麼
 
 Skills 是 Claude Code 五層架構（見 [[從 Prompt 到系統：用 Claude Code 打造 AI 開發閉環的五層架構設計|五層架構 framework overview]]）中的第三層，負責封裝 SDLC（軟體開發生命週期）各階段的結構化流程。每個 Skill 對應開發週期中的一個明確階段：需求探索、功能實作、Bug 修復、測試撰寫、代碼審查、Jira 操作等。
@@ -39,6 +42,8 @@ Skills 在五層架構中處於中間位置：上承 CLAUDE.md 的索引指引�
 ## 延伸閱讀
 
 > [!info] 站內延伸
+>
 > - [[gstack — 把 Claude Code 變成虛擬工程團隊的開源框架|gstack 框架]] — gstack 以 28 個 Skills 將單一 AI agent 拆分成 CEO/工程主管/QA 等角色，是 Skills 作為角色封裝的極致案例
 > - [[AI 代理工作流實戰：從模糊需求到 Develop Done 的完整閉環|AI 代理工作流實戰]] — 以排班衝突功能為例，展示 `/opsx`、`/thes-workflow`、`jira-ops` 等 Skills 在閉環中實際串接的方式
 > - [[Claude Code Prompt 分層設計原則：Rule、Memory、Skill 各該放什麼？|Prompt 三層分層設計]] — 從內容性質角度解析什麼時候該寫成 Skill 而非 Rule 或 Memory
+> - [[Claude Code 系統提示詞架構優化：從 Always-Load 到按需載入|系統提示詞按需載入]] — 系統提示詞層級的按需載入實戰

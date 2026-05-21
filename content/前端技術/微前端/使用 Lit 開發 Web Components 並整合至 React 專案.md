@@ -8,6 +8,9 @@ draft: false
 status: published
 ---
 
+> [!note] 同名概念釐清
+> 本文的「Web Components」指以 Lit 實作的可重用 UI 元件（實作工具）；另見 [[微前端組件化方案指標評比]] 中相同詞但指與 iFrame/Qiankun 並列的微前端策略。
+
 **TL;DR：** 使用 Lit 開發 Web Components，透過 Vite 打包為 UMD/IIFE 格式，再用 `@lit/react` 的 `createComponent` 包裝為 React 元件。支援現代 React 19 和舊版 React 14 專案，實現「寫一次，跨框架使用」。
 
 ```mermaid
@@ -19,7 +22,7 @@ flowchart LR
 
 ## 簡介
 
-Web Components 是一套用於創建可重用 UI 元件的網頁標準，它可以跨框架使用，這意味著你可以在 React、Vue 或純 JavaScript 專案中使用相同的組件。本文將詳細介紹如何使用 Lit 庫開發 Web Components，並通過 Vite 打包後整合至 React 專案中。
+Web Components 是一套用於創建可重用 UI 元件的網頁標準，它可以跨框架使用，這意味著你可以在 React、Vue 或純 JavaScript 專案中使用相同的組件。本文將詳細介紹如何使用 Lit 庫開發 Web Components，並通過 Vite 打包後整合至 React 專案中。此方案在微前端策略中的定位見 [[微前端組件化方案指標評比]]。
 
 ## 技術棧
 
@@ -36,8 +39,8 @@ Web Components 是一套用於創建可重用 UI 元件的網頁標準，它可�
 
 ```typescript
 // src/my-element.ts
-import { LitElement, html, css } from 'lit';
-import { customElement, property } from 'lit/decorators.js';
+import { LitElement, html, css } from "lit"
+import { customElement, property } from "lit/decorators.js"
 
 /**
  * 一個簡單的 Lit 元素
@@ -45,7 +48,7 @@ import { customElement, property } from 'lit/decorators.js';
  * @element my-element
  * @csspart button - The button
  */
-@customElement('my-element')
+@customElement("my-element")
 export class MyElement extends LitElement {
   static styles = css`
     :host {
@@ -58,18 +61,16 @@ export class MyElement extends LitElement {
       width: 100%;
       height: 100%;
     }
-  `;
+  `
 
   render() {
-    return html`
-      <div id="root"></div>
-    `;
+    return html` <div id="root"></div> `
   }
 }
 
 declare global {
   interface HTMLElementTagNameMap {
-    'my-element': MyElement;
+    "my-element": MyElement
   }
 }
 ```
@@ -134,12 +135,12 @@ export class MyElement extends LitElement {
 ```typescript
 // src/main-web-components.ts
 // 這個文件是Web Components的打包入口點
-import './my-element';
+import "./my-element"
 
 // 這裡我們可以添加更多的Web Components
 // 例如：import './other-element'
 
-export * from './my-element';
+export * from "./my-element"
 ```
 
 ### 4. 配置 Vite 打包
@@ -148,9 +149,9 @@ export * from './my-element';
 
 ```typescript
 // vite.config.ts
-import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
-import compression from 'vite-plugin-compression';
+import { defineConfig } from "vite"
+import react from "@vitejs/plugin-react"
+import compression from "vite-plugin-compression"
 
 export default defineConfig({
   plugins: [
@@ -160,44 +161,44 @@ export default defineConfig({
       verbose: true,
       disable: false,
       threshold: 10240,
-      algorithm: 'gzip',
-      ext: '.gz',
+      algorithm: "gzip",
+      ext: ".gz",
     }),
     // brotli壓縮 (更高效)
     compression({
       verbose: true,
       disable: false,
       threshold: 10240,
-      algorithm: 'brotliCompress',
-      ext: '.br',
-    })
+      algorithm: "brotliCompress",
+      ext: ".br",
+    }),
   ],
   build: {
     lib: {
-      entry: './src/main-web-components.ts',
-      name: 'MyWebComponents',
-      formats: ['umd', 'iife'],
-      fileName: (format) => `my-web-components.${format}.js`
+      entry: "./src/main-web-components.ts",
+      name: "MyWebComponents",
+      formats: ["umd", "iife"],
+      fileName: (format) => `my-web-components.${format}.js`,
     },
     rollupOptions: {
-      external: ['react', 'react-dom'],
+      external: ["react", "react-dom"],
       output: {
         globals: {
-          react: 'React',
-          'react-dom': 'ReactDOM'
-        }
-      }
+          react: "React",
+          "react-dom": "ReactDOM",
+        },
+      },
     },
-    outDir: 'dist',
+    outDir: "dist",
     emptyOutDir: true,
-    target: 'es2015'
+    target: "es2015",
   },
   define: {
-    'process.env': {
-      NODE_ENV: JSON.stringify('production')
-    }
-  }
-});
+    "process.env": {
+      NODE_ENV: JSON.stringify("production"),
+    },
+  },
+})
 ```
 
 ### 5. 設定 TypeScript 配置
@@ -224,7 +225,7 @@ export default defineConfig({
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
-    "declaration": true,  
+    "declaration": true,
     "declarationDir": "dist/types",
     "esModuleInterop": true,
     "experimentalDecorators": true
@@ -252,9 +253,7 @@ export default defineConfig({
       "types": "./dist/types/my-element.d.ts"
     }
   },
-  "files": [
-    "dist"
-  ]
+  "files": ["dist"]
 }
 ```
 
@@ -262,7 +261,7 @@ export default defineConfig({
 
 ### 現代 React 專案中使用
 
-在現代 React 專案中，可以使用 `@lit/react` 來創建 React 包裝器：
+在現代 React 專案中，可以使用 `@lit/react` 來創建 React 包裝器（此模式在多版本 React 隔離的進階應用見 [[在 React 19 中優雅地整合與隔離舊版 React 元件]]）：
 
 ```typescript
 // src/MyElementComponent.tsx
@@ -306,19 +305,19 @@ module.exports = {
   // ... 其他配置
   resolve: {
     alias: {
-      'my-web-components': path.resolve(__dirname, 'path/to/my-web-components.iife.js'),
+      "my-web-components": path.resolve(__dirname, "path/to/my-web-components.iife.js"),
     },
   },
-};
+}
 ```
 
 然後在 React 組件中使用：
 
 ```jsx
 // 在舊版 React 組件中
-import React from 'react';
+import React from "react"
 // 僅引入副作用，不使用導出
-import 'my-web-components';
+import "my-web-components"
 
 class MyComponent extends React.Component {
   render() {
@@ -326,7 +325,7 @@ class MyComponent extends React.Component {
       <div>
         <my-element></my-element>
       </div>
-    );
+    )
   }
 }
 ```
@@ -357,11 +356,11 @@ class MyComponent extends React.Component {
 // vite.config.ts
 export default defineConfig({
   define: {
-    'process.env': {
-      NODE_ENV: JSON.stringify('production')
-    }
-  }
-});
+    "process.env": {
+      NODE_ENV: JSON.stringify("production"),
+    },
+  },
+})
 ```
 
 ### 3. 支持舊版瀏覽器
@@ -373,11 +372,11 @@ export default defineConfig({
 export default defineConfig({
   build: {
     lib: {
-      formats: ['umd', 'iife'], // 選擇兼容性更好的格式
+      formats: ["umd", "iife"], // 選擇兼容性更好的格式
     },
-    target: 'es2015' // 指定輸出的JS版本
-  }
-});
+    target: "es2015", // 指定輸出的JS版本
+  },
+})
 ```
 
 ## 優化文件大小
@@ -393,4 +392,4 @@ export default defineConfig({
 
 使用 Lit 開發 Web Components 並整合到 React 專案是一種靈活且強大的方法，尤其適合需要跨框架共享組件的場景。通過合理配置 Vite 和 TypeScript，可以解決各種兼容性和打包問題，實現高效、可維護的前端開發。
 
-無論是現代 React 應用還是舊版 React 專案，都可以通過這種方式共享和復用 UI 組件，實現真正的「寫一次，到處運行」。 
+無論是現代 React 應用還是舊版 React 專案，都可以通過這種方式共享和復用 UI 組件，實現真正的「寫一次，到處運行」。

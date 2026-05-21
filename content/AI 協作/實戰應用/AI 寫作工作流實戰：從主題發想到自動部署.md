@@ -82,12 +82,12 @@ Quartz 吃的是 Obsidian-flavored Markdown，和標準 Markdown 有幾個關鍵
 
 技術文章幾乎都需要圖表。在這條產線中有兩個選項：
 
-| | Mermaid | Excalidraw |
-|--|---------|------------|
-| 產出方式 | 直接在 Markdown 寫 code block | Skill 生成 `.excalidraw.md` |
-| 風格 | 工整、正式 | 手繪、親切 |
-| 適合場景 | 線性流程、序列圖 | 架構圖、自由佈局 |
-| Diff 友善度 | 純文字 ✅ | JSON ❌ |
+|             | Mermaid                       | Excalidraw                  |
+| ----------- | ----------------------------- | --------------------------- |
+| 產出方式    | 直接在 Markdown 寫 code block | Skill 生成 `.excalidraw.md` |
+| 風格        | 工整、正式                    | 手繪、親切                  |
+| 適合場景    | 線性流程、序列圖              | 架構圖、自由佈局            |
+| Diff 友善度 | 純文字 ✅                     | JSON ❌                     |
 
 詳細的比較和設定方式可以參考 [[在 Quartz Blog 中使用 Mermaid 與 Excalidraw 圖表|Mermaid 與 Excalidraw 圖表]] 這篇。
 
@@ -122,11 +122,11 @@ obsidian read "AI 協作/實戰應用/某篇文章.md" --vault jimmy-blog --sile
 
 這條產線目前產出了以下文章：
 
-| 文章 | 類型 | 使用的 Skills | 特殊操作 |
-|------|------|--------------|---------|
-| [[gstack — 把 Claude Code 變成虛擬工程團隊的開源框架\|gstack 分析文]] | Deep Dive | technical-blog-writing, obsidian-markdown, excalidraw-diagram | 4 張 Mermaid → Excalidraw |
-| [[AI 審查工作流實戰：從掃描分級到商業報告\|技術債審查 Pipeline]] | Workflow | technical-blog-writing, obsidian-markdown | 3 個 Skill 組合掃描實測 |
-| [[在 Quartz Blog 中使用 Mermaid 與 Excalidraw 圖表\|Mermaid 與 Excalidraw 圖表]] | Tutorial | technical-blog-writing, obsidian-markdown, excalidraw-diagram | Excalidraw demo 圖表生成 |
+| 文章                                                                             | 類型      | 使用的 Skills                                                 | 特殊操作                  |
+| -------------------------------------------------------------------------------- | --------- | ------------------------------------------------------------- | ------------------------- |
+| [[gstack — 把 Claude Code 變成虛擬工程團隊的開源框架\|gstack 分析文]]            | Deep Dive | technical-blog-writing, obsidian-markdown, excalidraw-diagram | 4 張 Mermaid → Excalidraw |
+| [[AI 審查工作流實戰：從掃描分級到商業報告\|技術債審查 Pipeline]]                 | Workflow  | technical-blog-writing, obsidian-markdown                     | 3 個 Skill 組合掃描實測   |
+| [[在 Quartz Blog 中使用 Mermaid 與 Excalidraw 圖表\|Mermaid 與 Excalidraw 圖表]] | Tutorial  | technical-blog-writing, obsidian-markdown, excalidraw-diagram | Excalidraw demo 圖表生成  |
 
 ## 踩坑紀錄與限制
 
@@ -158,7 +158,10 @@ obsidian read "AI 協作/實戰應用/某篇文章.md" --vault jimmy-blog --sile
 ## 延伸閱讀
 
 > [!info] 站內延伸
+>
 > - [[AI 代理工作流實戰：從模糊需求到 Develop Done 的完整閉環|AI 代理工作流實戰]] — 同樣以 AI 為 orchestrator 的完整閉環，但場景是軟體開發（需求→TDD→Jira→部署），與本文的寫作產線互為參照
+> - [[CLAUDE.md 專案入口層：Session 自動載入的設計哲學|CLAUDE.md 入口層]] — 寫作產線背後的 session 入口層哲學
+> - [[Claude Code Prompt 分層設計原則：Rule、Memory、Skill 各該放什麼？|Prompt 分層設計]] — 寫作 Skill 組合的分層方法論
 
 - [Claude Code 官方文件](https://docs.anthropic.com/en/docs/claude-code)
 - [Skills 生態 — skills.sh](https://skills.sh)

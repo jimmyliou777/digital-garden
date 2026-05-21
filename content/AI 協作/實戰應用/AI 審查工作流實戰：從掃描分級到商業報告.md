@@ -31,11 +31,11 @@ Claude Code 的社群 Skill 生態（[skills.sh](https://skills.sh)）裡有不�
 
 用 `npx skills find` 搜索後，篩選出三個定位互補的 Skill：
 
-| Skill | 來源 | 定位 | 產出 |
-|-------|------|------|------|
-| **architecture-review** | getsentry/warden | Staff Engineer 視角架構審查 | 分級 findings（critical → low） |
-| **audit-code-health** | kyzooghost | 結構化健康檢查（可調深度） | P0/P1/P2 work items 表格 |
-| **technical-debt-strategy** | omer-metin | 技術債 → 商業語言翻譯 | 利息估算、payback plan |
+| Skill                       | 來源             | 定位                        | 產出                            |
+| --------------------------- | ---------------- | --------------------------- | ------------------------------- |
+| **architecture-review**     | getsentry/warden | Staff Engineer 視角架構審查 | 分級 findings（critical → low） |
+| **audit-code-health**       | kyzooghost       | 結構化健康檢查（可調深度）  | P0/P1/P2 work items 表格        |
+| **technical-debt-strategy** | omer-metin       | 技術債 → 商業語言翻譯       | 利息估算、payback plan          |
 
 三者的關係可以這樣理解：
 
@@ -116,13 +116,13 @@ audit-code-health 則更擅長找**具體的 code-level 問題**——production
 
 > [!warning] 以下利息數字為 AI 根據掃描結果的建議值，需要由熟悉 codebase 的團隊成員校準後才適合用於向上溝通。
 
-| 技術債項目 | 每 sprint 利息 | 累積 6 個月 | 修復成本 | 回本期 |
-|-----------|---------------|------------|---------|--------|
-| 巨大模組理解成本 | ~2 天 | ~24 天 | 8 天 | 4 sprints |
-| 無測試的人工驗證 | ~1 天 | ~12 天 | 5 天 | 5 sprints |
-| 靜默錯誤排查 | ~0.5 天 | ~6 天 | 1 天 | 2 sprints |
-| Production log 雜訊 | ~0.25 天 | ~3 天 | 0.5 天 | 2 sprints |
-| **合計** | **~3.75 天** | **~45 天** | **14.5 天** | **~4 sprints** |
+| 技術債項目          | 每 sprint 利息 | 累積 6 個月 | 修復成本    | 回本期         |
+| ------------------- | -------------- | ----------- | ----------- | -------------- |
+| 巨大模組理解成本    | ~2 天          | ~24 天      | 8 天        | 4 sprints      |
+| 無測試的人工驗證    | ~1 天          | ~12 天      | 5 天        | 5 sprints      |
+| 靜默錯誤排查        | ~0.5 天        | ~6 天       | 1 天        | 2 sprints      |
+| Production log 雜訊 | ~0.25 天       | ~3 天       | 0.5 天      | 2 sprints      |
+| **合計**            | **~3.75 天**   | **~45 天**  | **14.5 天** | **~4 sprints** |
 
 用這個框架，你可以跟 PM 說：「我們每 sprint 花 37.5% 的時間在 workaround 技術債，投入 14.5 天做一次性修復，4 個 sprint 就回本。」這比「codebase 很亂需要重構」有說服力太多了。
 
@@ -136,6 +136,7 @@ audit-code-health 則更擅長找**具體的 code-level 問題**——production
 
 ```markdown
 ## P1 #1: Production console.log 資訊洩漏
+
 **問題**：Axios interceptor 在 production 對每個 request/response 都 log
 **證據**：axios-instance.ts:54, :93
 **修復**：加 isDev guard
@@ -166,6 +167,7 @@ flowchart LR
 ```
 
 **Step 1：安裝 Skills**（一次性）
+
 ```bash
 npx skills add getsentry/warden@architecture-review -g -y
 npx skills add kyzooghost/audit-code-health-skill@audit-code-health -g -y
@@ -224,4 +226,10 @@ Skill 本質上就是一個 `SKILL.md` 文件——定義角色、方法論、�
 
 ---
 
-*本文的審查流程實測於 2026 年 3 月，使用 Claude Opus 4.6 + 上述三個社群 Skill。技術債的利息估算僅供參考，實際數字需根據團隊和專案情況校準。*
+_本文的審查流程實測於 2026 年 3 月，使用 Claude Opus 4.6 + 上述三個社群 Skill。技術債的利息估算僅供參考，實際數字需根據團隊和專案情況校準。_
+
+> [!note] 相關閱讀
+>
+> - [[別再寫「你是專家」— 研究告訴我們 Prompt 角色設定的真相]] — 角色設定方法論
+> - [[Claude Code Prompt 分層設計原則：Rule、Memory、Skill 各該放什麼？]] — Skills 組合方法論
+> - [[AI 代理工作流實戰：從模糊需求到 Develop Done 的完整閉環]] — 雙向回連

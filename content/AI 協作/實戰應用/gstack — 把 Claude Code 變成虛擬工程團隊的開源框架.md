@@ -8,6 +8,9 @@ draft: false
 status: published
 ---
 
+> [!note] 同名概念釐清
+> 本文的「Skills」指 gstack 的 23+8 角色化 prompt 套件；另見 [[Claude Code Skills 層：SDLC 結構化流程的按需觸發機制]] 中相同詞但指 Claude Code 官方 SKILL.md 機制。
+
 **TL;DR：** gstack 是 Garry Tan 開源的 Claude Code skill 集合（**23 個主 skill + 8 個 power tools**），把單一 AI agent 拆成 CEO、工程主管、QA、SRE 等角色。但 skill 數量不是重點，骨幹是 **ETHOS 三支柱**：Boil the Lake（完整的邊際成本→0）、Search Before Building（先查再做）、User Sovereignty（AI 推薦、人類決定）。Team mode 還能把它寫進 repo 變成團隊強制依賴。MIT 授權，30 秒安裝。
 
 ![[gstack-hero.png]]
@@ -139,3 +142,9 @@ gstack-team-init required   # 把 gstack 寫成 repo contract
 - [HN #47418576](https://news.ycombinator.com/item?id=47418576) — 最有營養的批評視角
 - [[AI 代理工作流實戰：從模糊需求到 Develop Done 的完整閉環|AI 代理工作流實戰]] — Stuck Protocol 與 Iron Law 的對照
 - [[AI E2E 測試實戰：用 Claude Code 平行代理同時操控三個瀏覽器驗證你的網站|AI E2E 測試實戰]] — Browse System 對比其他瀏覽器自動化方案
+
+> [!note] 相關閱讀
+>
+> - [[Claude Code Skills 層：SDLC 結構化流程的按需觸發機制|Skills 層]] — Skill 機制方法論
+> - [[Claude Code 系統提示詞架構優化：從 Always-Load 到按需載入|系統提示詞按需載入]] — preamble-tier 同概念群
+> - [[AI 軟體工程工作流 2026：從 Spec-Driven 到 Superpowers 的實戰指南]] — gstack 為六大方案之一

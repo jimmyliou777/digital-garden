@@ -21,6 +21,7 @@ status: published
 - [[AI 代理工作流實戰：從模糊需求到 Develop Done 的完整閉環]] — 六步閉環：探索、設計、建單、TDD、驗證、完成
 - [[AI E2E 測試實戰：用 Claude Code 平行代理同時操控三個瀏覽器驗證你的網站]] — 平行代理 + Playwright，97 秒完成多面向 E2E 測試
 - [[Superpowers-OpenSpec-OAuth2-8階段實戰]] — 用 Google OAuth2 為案例走過 8 階段完整流程，含 Phase 5 規格回填與 6 個常見陷阱
+- [[從工單到 PR：用 Jira × Claude Code × Git Worktree 跑一條紀律化的接單流程|從工單到 PR]] — Jira 工單到 PR 的紀律化接單流程
 
 ## 基礎設施
 
@@ -29,6 +30,7 @@ status: published
 ## 框架分析
 
 - [[gstack — 把 Claude Code 變成虛擬工程團隊的開源框架]] — 拆解 gstack 的 Browse System、SKILL.md 模板引擎與 Sprint Pipeline
+- [[Claude Code之父曝15項技巧：如何讓AI自己排程寫程式？|Boris Cherny 15 技巧]] — Claude Code 作者親述 15 項實戰技巧
 
 ## 相關
 

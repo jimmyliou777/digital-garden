@@ -10,6 +10,14 @@ status: evergreen
 
 **TL;DR：** OpenSpec 是一個 Spec-Driven Development 框架，讓人與 AI 在寫程式碼前先對齊需求。透過 delta specs 支援既有專案，提供簡潔（4 步）與完整（8 步）兩套工作流。
 
+> [!note] 相關閱讀
+>
+> - [[Superpowers-OpenSpec-兩個抽象層]] — 兩抽象層方法論對照
+> - [[AI 軟體工程工作流 2026：從 Spec-Driven 到 Superpowers 的實戰指南]] — Spec-Driven 上位方法論
+> - [[從 Prompt 到系統：用 Claude Code 打造 AI 開發閉環的五層架構設計]] — OpenSpec 在五層架構的定位
+> - [[AI 代理工作流實戰：從模糊需求到 Develop Done 的完整閉環]] — explore → propose → apply 對照
+> - [[Superpowers-OpenSpec-OAuth2-8階段實戰]] — 8 階段對照
+
 ## 核心概念
 
 **Spec-Driven Development (SDD)** — 先對齊需求再寫程式碼。Spec 是 source of truth，隨每次 archive 演進。
@@ -45,12 +53,12 @@ openspec/
 
 ### Artifact 說明
 
-| 檔案 | 用途 |
-|------|------|
-| `proposal.md` | 為什麼做、做什麼、價值主張 |
-| `design.md` | 技術方案、架構決策、權衡取捨 |
-| `specs/` | Delta specs — 只描述與 main spec 的差異 |
-| `tasks.md` | 可執行的實作清單，具體步驟 |
+| 檔案          | 用途                                    |
+| ------------- | --------------------------------------- |
+| `proposal.md` | 為什麼做、做什麼、價值主張              |
+| `design.md`   | 技術方案、架構決策、權衡取捨            |
+| `specs/`      | Delta specs — 只描述與 main spec 的差異 |
+| `tasks.md`    | 可執行的實作清單，具體步驟              |
 
 ## 兩套工作流
 
@@ -74,33 +82,33 @@ openspec/
 
 ### 規劃階段
 
-| 命令 | 做什麼 | 產出 |
-|------|--------|------|
-| `/opsx:explore` | 腦力激盪、釐清需求，不產出 artifact | 思考筆記 |
-| `/opsx:propose <idea>` | 一步到位產出所有 artifact | proposal + design + specs + tasks |
-| `/opsx:new` | 只建立 change scaffold | proposal.md（骨架） |
-| `/opsx:continue` | 逐步建立下一個 artifact | 依序：proposal → design → specs → tasks |
-| `/opsx:ff` | 快轉，一次產完剩餘 artifact | 跳過逐步確認，批次產出 |
+| 命令                   | 做什麼                              | 產出                                    |
+| ---------------------- | ----------------------------------- | --------------------------------------- |
+| `/opsx:explore`        | 腦力激盪、釐清需求，不產出 artifact | 思考筆記                                |
+| `/opsx:propose <idea>` | 一步到位產出所有 artifact           | proposal + design + specs + tasks       |
+| `/opsx:new`            | 只建立 change scaffold              | proposal.md（骨架）                     |
+| `/opsx:continue`       | 逐步建立下一個 artifact             | 依序：proposal → design → specs → tasks |
+| `/opsx:ff`             | 快轉，一次產完剩餘 artifact         | 跳過逐步確認，批次產出                  |
 
 ### 實作階段
 
-| 命令 | 做什麼 |
-|------|--------|
-| `/opsx:apply` | 根據 tasks.md 開始寫程式碼 |
+| 命令           | 做什麼                                   |
+| -------------- | ---------------------------------------- |
+| `/opsx:apply`  | 根據 tasks.md 開始寫程式碼               |
 | `/opsx:verify` | 驗證實作是否符合 spec 的所有 requirement |
 
 ### 收尾階段
 
-| 命令 | 做什麼 |
-|------|--------|
-| `/opsx:sync` | 將 delta spec 合併到 main spec（不歸檔） |
-| `/opsx:archive` | 歸檔 change，移到 archive/，同時合併 delta spec |
-| `/opsx:bulk-archive` | 批次歸檔多個 changes |
+| 命令                 | 做什麼                                          |
+| -------------------- | ----------------------------------------------- |
+| `/opsx:sync`         | 將 delta spec 合併到 main spec（不歸檔）        |
+| `/opsx:archive`      | 歸檔 change，移到 archive/，同時合併 delta spec |
+| `/opsx:bulk-archive` | 批次歸檔多個 changes                            |
 
 ### 輔助
 
-| 命令 | 做什麼 |
-|------|--------|
+| 命令            | 做什麼                       |
+| --------------- | ---------------------------- |
 | `/opsx:onboard` | 互動教學，帶你走完整個工作流 |
 
 > **語法差異**：Claude Code 用 `/opsx:propose`，Cursor/Windsurf 用 `/opsx-propose`。
@@ -110,24 +118,32 @@ openspec/
 Delta spec 不是重寫整份規格，而是只描述**差異**，這是 OpenSpec 支援 brownfield 的關鍵設計：
 
 ```markdown
-## ADDED Requirements      ← 新增的需求
+## ADDED Requirements ← 新增的需求
+
 ### Requirement: 新功能
+
 系統 SHALL 做某件事。
 
 #### Scenario: 基本場景
+
 - **WHEN** 使用者做 X
 - **THEN** 系統做 Y
 
-## MODIFIED Requirements   ← 修改既有需求（只寫變更部分）
+## MODIFIED Requirements ← 修改既有需求（只寫變更部分）
+
 ### Requirement: 已有功能
+
 #### Scenario: 新增的場景
+
 - **WHEN** 使用者做 A
 - **THEN** 系統做 B
 
-## REMOVED Requirements    ← 刪除的需求
+## REMOVED Requirements ← 刪除的需求
+
 ### Requirement: 棄用功能
 
-## RENAMED Requirements    ← 重命名
+## RENAMED Requirements ← 重命名
+
 - FROM: `### Requirement: 舊名`
 - TO: `### Requirement: 新名`
 ```

@@ -7,6 +7,9 @@ draft: false
 status: evergreen
 ---
 
+> [!note] 同名概念釐清
+> 本文的「Rules」指 `.claude/rules/*.md` path-based 載入規範；另見 [[從工單到 PR：用 Jira × Claude Code × Git Worktree 跑一條紀律化的接單流程]] 中相同詞但偏向團隊紀律規約。
+
 ## 是什麼
 
 Rules 層是 [[從 Prompt 到系統：用 Claude Code 打造 AI 開發閉環的五層架構設計|五層架構 framework overview]] 中的第四層，負責管理 **Domain 領域規範**。每條 rule 是一個 Markdown 檔案，存放在 `.claude/rules/` 目錄下，並透過 YAML frontmatter 的 `paths:` key 宣告觸發條件：當你正在編輯的檔案路徑匹配 `paths:` pattern 時，對應的 rule 才會自動注入 Claude 的 context。
@@ -39,6 +42,7 @@ Rules 層夾在 [[CLAUDE.md 專案入口層：Session 自動載入的設計哲�
 Rules 的內容邊界可參考 [[Claude Code Prompt 分層設計原則：Rule、Memory、Skill 各該放什麼？|Rule/Memory/Skill 內容分類]] 的「違反會出錯嗎？」判斷口訣——只有硬約束才屬於 rule，軟知識應下沉到 Memory。
 
 > [!info] 站內延伸
+>
 > - [[Claude Code 系統提示詞架構優化：從 Always-Load 到按需載入|系統提示詞優化實戰]] — 記錄從 16 個 `@` import 重構到四層按需載入的過程，Rules 的 `paths:` 機制是節省 ~15,000 tokens/session 的核心手段
 > - [[Claude Code Prompt 分層設計原則：Rule、Memory、Skill 各該放什麼？|Rule/Memory/Skill 內容分類]] — 從內容性質（護欄 / 經驗 / SOP）決定每條知識的歸屬，與本文的路徑載入機制互補
 > - [[從 Prompt 到系統：用 Claude Code 打造 AI 開發閉環的五層架構設計|五層架構設計]] — Rules 在完整五層體系中的位置，含 token 成本總覽與各層分工

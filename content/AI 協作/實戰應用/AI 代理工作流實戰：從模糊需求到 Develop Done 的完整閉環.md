@@ -590,3 +590,9 @@ THES-4703 的 E2E 測試觸發了 Stuck Protocol（詳見 Step 5）。這裡補�
 - [[Claude Code 系統提示詞架構優化：從 Always-Load 到按需載入|系統提示詞按需載入]] — 五層架構的 token 成本優化策略
 - [[AI 審查工作流實戰：從掃描分級到商業報告|技術債審查 Pipeline]] — 另一個 Skills 組合的實戰案例
 - [[AI E2E 測試實戰：用 Claude Code 平行代理同時操控三個瀏覽器驗證你的網站|AI E2E 測試實戰]] — 用平行代理 + Playwright 同時驗證網站多個面向
+
+> [!note] 相關閱讀
+>
+> - [[AI 軟體工程工作流 2026：從 Spec-Driven 到 Superpowers 的實戰指南]] — 對應方法論
+> - [[從工單到 PR：用 Jira × Claude Code × Git Worktree 跑一條紀律化的接單流程]] — Jira × Worktree 變體
+> - [[Superpowers-OpenSpec-OAuth2-8階段實戰]] — 8 階段對照

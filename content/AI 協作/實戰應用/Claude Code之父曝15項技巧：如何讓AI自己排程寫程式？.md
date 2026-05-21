@@ -74,12 +74,12 @@ Hooks 讓你在 Agent 的關鍵節點插入自訂邏輯，實現確定性控制�
 
 四個主要 hook 時機點：
 
-| Hook | 觸發時機 | 應用範例 |
-| --- | --- | --- |
-| SessionStart | 每次啟動 Claude | 動態載入 context |
-| PreToolUse | 每次執行 bash 指令前 | 記錄所有指令 log |
-| PermissionRequest | 需要授權時 | 把授權請求推送到 WhatsApp |
-| Stop | Claude 停止作業時 | 自動 poke 讓它繼續 |
+| Hook              | 觸發時機             | 應用範例                  |
+| ----------------- | -------------------- | ------------------------- |
+| SessionStart      | 每次啟動 Claude      | 動態載入 context          |
+| PreToolUse        | 每次執行 bash 指令前 | 記錄所有指令 log          |
+| PermissionRequest | 需要授權時           | 把授權請求推送到 WhatsApp |
+| Stop              | Claude 停止作業時    | 自動 poke 讓它繼續        |
 
 設定方式見 [code.claude.com/docs/en/hooks](http://code.claude.com/docs/en/hooks) 。
 
@@ -239,3 +239,4 @@ Cherny 坦言：「我大部分的程式碼都是用說的，不是用打的。�
 - [[AI 代理工作流實戰：從模糊需求到 Develop Done 的完整閉環]]
 - [[AI 軟體工程工作流 2026：從 Spec-Driven 到 Superpowers 的實戰指南]]
 - [[gstack — 把 Claude Code 變成虛擬工程團隊的開源框架]]
+- [[從工單到 PR：用 Jira × Claude Code × Git Worktree 跑一條紀律化的接單流程|從工單到 PR]] — 技巧 10 Git Worktrees 的紀律化實踐

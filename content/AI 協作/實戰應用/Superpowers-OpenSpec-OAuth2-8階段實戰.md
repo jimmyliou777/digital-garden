@@ -296,3 +296,5 @@ blast radius ≥ 1 個 module → OpenSpec change folder
 - [[Superpowers-OpenSpec-兩個抽象層]] — 本文的方法論基礎：為何 Superpowers 與 OpenSpec 不在同一抽象層
 - [[AI 軟體工程工作流 2026：從 Spec-Driven 到 Superpowers 的實戰指南|AI 工作流 2026]] — 把本文放回更大的工作流景觀（六大方案中 Spec-Driven + TDD + Agentic 的組合）
 - [[AI 代理工作流實戰：從模糊需求到 Develop Done 的完整閉環|AI 代理工作流實戰]] — 另一條閉環路徑（六步閉環），與本文 8 階段互相映照
+- [[OpenSpec 使用指南：Spec-Driven 開發工作流|OpenSpec 使用指南]] — OpenSpec 純工具使用
+- [[從 Prompt 到系統：用 Claude Code 打造 AI 開發閉環的五層架構設計|五層架構]] — Subagent 隔離的方法論底層

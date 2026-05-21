@@ -18,9 +18,9 @@ status: published
 
 研究將任務分成兩類：
 
-| 任務類型 | 範例 | 角色設定效果 |
-|---------|------|------------|
-| **對齊依賴型**（Alignment-dependent） | 寫作、角色扮演、安全性規範 | 提升表現 |
+| 任務類型                               | 範例                           | 角色設定效果   |
+| -------------------------------------- | ------------------------------ | -------------- |
+| **對齊依賴型**（Alignment-dependent）  | 寫作、角色扮演、安全性規範     | 提升表現       |
 | **預訓練依賴型**（Pretrain-dependent） | 程式碼生成、數學運算、事實問答 | **降低準確率** |
 
 在 MMLU 基準測試中，設定專家人格的模型準確率僅 **68.0%**，低於沒有角色設定的基礎模型 **71.6%**。差距不大，但方向明確——角色設定不只是沒用，而是有害。
@@ -59,13 +59,13 @@ USC 研究團隊提出的解釋是**運算資源競爭**。
 
 ### 分場景策略
 
-| 場景 | 建議 | 原因 |
-|------|------|------|
-| 寫程式碼 | 直接描述需求和約束 | 角色設定會降低程式碼準確率 |
-| 數學 / 邏輯推理 | 直接給問題，不加角色 | 預訓練知識不需要角色激活 |
-| 創意寫作 / 文案 | 可以加角色設定 | 對齊型任務確實受益於角色 |
-| 安全性 / 規範遵循 | 加具體規則和角色 | 對齊需求明確時有效 |
-| Code review | 給具體的檢查標準 | 比「你是資深 reviewer」有效 |
+| 場景              | 建議                 | 原因                        |
+| ----------------- | -------------------- | --------------------------- |
+| 寫程式碼          | 直接描述需求和約束   | 角色設定會降低程式碼準確率  |
+| 數學 / 邏輯推理   | 直接給問題，不加角色 | 預訓練知識不需要角色激活    |
+| 創意寫作 / 文案   | 可以加角色設定       | 對齊型任務確實受益於角色    |
+| 安全性 / 規範遵循 | 加具體規則和角色     | 對齊需求明確時有效          |
+| Code review       | 給具體的檢查標準     | 比「你是資深 reviewer」有效 |
 
 ### 無效 vs 有效做法
 
@@ -89,6 +89,7 @@ USC 研究團隊提出的解釋是**運算資源競爭**。
 
 ```markdown
 # Identity
+
 你是一位資深全端工程師，精通 React、TypeScript 和系統設計。
 你有 15 年的軟體開發經驗，擅長寫出高品質、可維護的程式碼。
 ```
@@ -97,6 +98,7 @@ USC 研究團隊提出的解釋是**運算資源競爭**。
 
 ```markdown
 # Code Principles
+
 - TypeScript strict mode — 絕對不用 any、@ts-ignore
 - Component composition over inheritance
 - Server Components first — 非必要不加 'use client'
@@ -132,3 +134,8 @@ USC 研究團隊提出的解釋是**運算資源競爭**。
 - [Learn Prompting — Role Prompting](https://learnprompting.org/docs/advanced/zero_shot/role_prompting)
 - [Lakera — The Ultimate Guide to Prompt Engineering in 2026](https://www.lakera.ai/blog/prompt-engineering-guide)
 - [1,500+ Research Papers on Prompt Engineering — What Actually Works](https://aakashgupta.medium.com/i-spent-a-month-reading-1-500-research-papers-on-prompt-engineering-7236e7a80595)
+
+> [!note] 相關閱讀
+>
+> - [[AI 寫作工作流實戰：從主題發想到自動部署]] — Prompt 角色設定在寫作產線的實戰
+> - [[AI 審查工作流實戰：從掃描分級到商業報告]] — Prompt 角色設定在審查產線的實戰

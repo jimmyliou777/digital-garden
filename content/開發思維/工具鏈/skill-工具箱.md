@@ -8,16 +8,24 @@ status: published
 shortTitle: "Skill 工具箱"
 ---
 
+> [!note] 相關閱讀
+>
+> - [[Claude Code Skills 層：SDLC 結構化流程的按需觸發機制|Skills 層]] — Skill 機制方法論
+> - [[CLAUDE.md 專案入口層：Session 自動載入的設計哲學|CLAUDE.md 入口層]] — 上層觸發來源
+> - [[Claude Code Rules 層：Path-Based 自動載入的零配置設計|Rules 層]] — scaffold-rules 對應方法論
+> - [[Claude Code 系統提示詞架構優化：從 Always-Load 到按需載入|系統提示詞按需載入]] — 觸發核心機制
+> - [[gstack — 把 Claude Code 變成虛擬工程團隊的開源框架]] — 成熟 Skill 框架對照
+
 隨著 Claude Code 使用愈深，逐漸累積了一些自建 Skill。這篇筆記記錄我建了哪些、怎麼用、以及常見的串接組合。
 
 所有自建 Skill 的原始碼版控在 jimmy-skills repo，透過 symlink 掛載到 `~/.claude/skills/`。
 
 ## Skill 清單
 
-| Skill | 用途 | 狀態 | 建立日期 |
-|-------|------|------|----------|
-| tech-profile | 技術棧偵測與訪談，產出 `docs/tech-stack-profile.md` | active | 2026 |
-| scaffold-rules | 依據技術棧自動生成 `.claude/rules/` 和 `CLAUDE.md` 骨架 | active | 2026 |
+| Skill          | 用途                                                    | 狀態   | 建立日期 |
+| -------------- | ------------------------------------------------------- | ------ | -------- |
+| tech-profile   | 技術棧偵測與訪談，產出 `docs/tech-stack-profile.md`     | active | 2026     |
+| scaffold-rules | 依據技術棧自動生成 `.claude/rules/` 和 `CLAUDE.md` 骨架 | active | 2026     |
 
 ## 鏈路組合
 

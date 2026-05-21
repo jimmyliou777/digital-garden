@@ -8,6 +8,9 @@ draft: false
 status: published
 ---
 
+> [!note] 同名概念釐清
+> 本文的「Subagent」指 Playwright 平行代理；另見 [[從 Prompt 到系統：用 Claude Code 打造 AI 開發閉環的五層架構設計]] 中相同詞但指 Test Agent / Implementation Agent 的 context 隔離。
+
 **TL;DR：** Claude Code 的 Agent tool 可以平行派發多個子代理，每個代理各自啟動獨立的 Chromium 瀏覽器執行 Playwright 腳本。實測 3 個 Agent 同時驗證 blog 的搜尋功能、元件渲染、Dark Mode 與 RWD——97 秒完成全部測試，比循序估計快 63%（計算方式：1 − 97/261，其中 261 秒為三個 Agent 循序執行的耗時加總，非實測循序值）。
 
 > **讀者假設：** 你已經在使用 Claude Code，對 Agent tool、Skill（Claude Code 的擴充模組，透過 slash command 觸發特定工作流程）、MCP（讓 AI 操作外部工具的標準協定）這些概念有基本認識。如果還不熟悉平行代理的派發邏輯，這篇會從頭解釋。
@@ -69,9 +72,11 @@ flowchart LR
 ### Playwright Skill — 腳本式
 
 > [!info] Playwright Skill 安裝
+>
 > ```bash
 > npx @anthropic-ai/claude-code-skills add nicobailey/playwright-skill -g -y
 > ```
+>
 > 安裝後 Claude Code 即可透過 slash command 操控 Chromium 瀏覽器。
 
 Claude Code 寫一段完整的 Playwright 腳本（JavaScript），然後透過 Bash tool 執行 `node run.js`。AI 一次把所有測試邏輯寫進腳本，執行後拿回結果。
@@ -79,11 +84,13 @@ Claude Code 寫一段完整的 Playwright 腳本（JavaScript），然後透過 
 **運作方式：** AI 根據你的需求產生一個 `.js` 檔案，內容是標準的 Playwright API 呼叫——`page.goto()`、`page.click()`、`page.screenshot()` 等等。腳本寫完後，一次性執行。
 
 **優點：**
+
 - 速度快——一次執行，沒有來回的 tool call overhead
 - 完全可程式化——迴圈、條件判斷、複雜的等待邏輯都能寫
 - 可重複執行——同一個腳本可以跑很多次
 
 **缺點：**
+
 - 需要 AI 一次寫對整段腳本，除錯時要重跑整個流程
 - 中間步驟的視覺回饋要靠截圖，AI 在執行過程中看不到畫面
 
@@ -96,11 +103,13 @@ Claude Code 寫一段完整的 Playwright 腳本（JavaScript），然後透過 
 **運作方式：** MCP server 維護一個持續開啟的瀏覽器 session。Claude Code 送出一個 tool call（例如 `navigate to http://localhost:8080`），等回傳結果後，送出下一個 tool call（例如 `click on search button`）。
 
 **優點：**
+
 - 零腳本——不需要寫任何 JavaScript
 - 互動式——每一步都能看到頁面狀態（通常透過 accessibility tree 或截圖）
 - 彈性高——可以根據頁面實際內容即時調整策略
 
 **缺點：**
+
 - 速度慢——每個操作都是一次 tool call round trip
 - 不適合大量測試——10 步操作 = 10 次 tool call，token 用量高
 - Session 管理有時不穩定
@@ -114,11 +123,13 @@ Claude Code 寫一段完整的 Playwright 腳本（JavaScript），然後透過 
 **運作方式：** Main Agent 分析測試需求，拆分成彼此獨立的面向（例如：搜尋、元件渲染、RWD）。然後用 Agent tool 平行派發三個子代理，每個子代理收到自己負責的 prompt，各自寫腳本、執行、回報結果。Main Agent 等所有子代理完成後彙整報告。
 
 **優點：**
+
 - 時間等於最慢的那個代理，而非全部加總
 - 每個代理有完整的 context，可以自行處理異常
 - 天然的隔離——代理之間不共享狀態，不會互相干擾
 
 **缺點：**
+
 - 每個代理都開一個 Chromium，記憶體用量較高
 - Prompt 設計成本高——每個代理的 prompt 必須完全自足
 - 任務拆分需要人工判斷——哪些面向真的獨立？
@@ -127,13 +138,13 @@ Claude Code 寫一段完整的 Playwright 腳本（JavaScript），然後透過 
 
 ### 方案比較
 
-| | Playwright Skill | Playwright MCP | 平行代理 + Skill |
-|---|---|---|---|
-| **操作模式** | 寫腳本，一次執行 | 逐步呼叫 tool | 多代理各自寫腳本 |
-| **速度** | 快 | 慢（多次 round trip） | 最快（平行執行） |
-| **彈性** | 高（完整程式邏輯） | 最高（即時調整） | 高（每個代理獨立決策） |
-| **學習成本** | 中（需懂 Playwright API） | 低（自然語言操作） | 高（需設計 prompt + 拆分策略） |
-| **適用場景** | 可重複測試套件 | 一次性 UI 驗證 | 多面向同時測試 |
+|              | Playwright Skill          | Playwright MCP        | 平行代理 + Skill               |
+| ------------ | ------------------------- | --------------------- | ------------------------------ |
+| **操作模式** | 寫腳本，一次執行          | 逐步呼叫 tool         | 多代理各自寫腳本               |
+| **速度**     | 快                        | 慢（多次 round trip） | 最快（平行執行）               |
+| **彈性**     | 高（完整程式邏輯）        | 最高（即時調整）      | 高（每個代理獨立決策）         |
+| **學習成本** | 中（需懂 Playwright API） | 低（自然語言操作）    | 高（需設計 prompt + 拆分策略） |
+| **適用場景** | 可重複測試套件            | 一次性 UI 驗證        | 多面向同時測試                 |
 
 怎麼選？用這張流程圖：
 
@@ -230,11 +241,11 @@ Agent B 和 Agent C 的 prompt 結構相同，只是 scope 和測試項目不同
 
 **Agent A — 搜尋與導航**
 
-| 測試項 | 結果 | 說明 |
-|--------|------|------|
-| 首頁載入 | ⚠️ 部分 | `<title>` 是「關於我」非 "Jimmy's Blog"（Quartz 行為，非 bug） |
-| 搜尋「前端」 | ✅ | 回傳 8 筆結果，FlexSearch 支援中文 |
-| SPA 導航 | ✅ | URL 正確變更為 `/前端技術/`，內容載入 |
+| 測試項       | 結果    | 說明                                                           |
+| ------------ | ------- | -------------------------------------------------------------- |
+| 首頁載入     | ⚠️ 部分 | `<title>` 是「關於我」非 "Jimmy's Blog"（Quartz 行為，非 bug） |
+| 搜尋「前端」 | ✅      | 回傳 8 筆結果，FlexSearch 支援中文                             |
+| SPA 導航     | ✅      | URL 正確變更為 `/前端技術/`，內容載入                          |
 
 ![[parallel-agents-search-results.png]]
 
@@ -242,14 +253,14 @@ Agent A 抓到一個有趣的發現：首頁的 `<title>` tag 不是 "Jimmy's Bl
 
 **Agent B — 內容與元件**
 
-| 測試項 | 結果 | 說明 |
-|--------|------|------|
-| 分類頁載入 | ✅ | HTTP 200，4 篇文章 |
-| Breadcrumbs | ✅ | 3 層導航元素 |
-| TOC | ✅ | toc-header + toc-content |
-| Graph | ✅ | 6 個 Graph 相關元素 |
-| Backlinks | ✅ | 正常渲染 |
-| TagList | ✅ | 4 個 tag 元素 |
+| 測試項      | 結果 | 說明                     |
+| ----------- | ---- | ------------------------ |
+| 分類頁載入  | ✅   | HTTP 200，4 篇文章       |
+| Breadcrumbs | ✅   | 3 層導航元素             |
+| TOC         | ✅   | toc-header + toc-content |
+| Graph       | ✅   | 6 個 Graph 相關元素      |
+| Backlinks   | ✅   | 正常渲染                 |
+| TagList     | ✅   | 4 個 tag 元素            |
 
 ![[parallel-agents-article-page.png]]
 
@@ -257,13 +268,13 @@ Agent B 的任務最「無聊」——全部通過，沒有意外。但它偵測
 
 **Agent C — Dark Mode 與 RWD**
 
-| 測試項 | 結果 | 說明 |
-|--------|------|------|
-| Dark Mode 切換 | ✅ | saved-theme 屬性正確切換 |
-| Light Mode 切回 | ✅ | 狀態正確恢復 |
-| Mobile (375px) | ✅ | Explorer 收合為 34x34px icon |
-| Tablet (768px) | ✅ | Explorer 同樣收合 |
-| Desktop (1440px) | ✅ | Sidebar 展開 256px |
+| 測試項           | 結果 | 說明                         |
+| ---------------- | ---- | ---------------------------- |
+| Dark Mode 切換   | ✅   | saved-theme 屬性正確切換     |
+| Light Mode 切回  | ✅   | 狀態正確恢復                 |
+| Mobile (375px)   | ✅   | Explorer 收合為 34x34px icon |
+| Tablet (768px)   | ✅   | Explorer 同樣收合            |
+| Desktop (1440px) | ✅   | Sidebar 展開 256px           |
 
 ![[parallel-agents-dark-mode.png]]
 
@@ -273,17 +284,17 @@ Agent C 驗證了最容易被忽略的兩件事：Dark Mode 的狀態持久化�
 
 ### 數據
 
-| 指標 | 數值 |
-|------|------|
-| Agent A 執行時間 | 97 秒 |
-| Agent B 執行時間 | 93 秒 |
-| Agent C 執行時間 | 71 秒 |
-| **平行實際耗時** | **97 秒**（取最長） |
-| 循序估計耗時 | 261 秒（97 + 93 + 71） |
-| **節省時間** | **估計 63%**（1 − 97/261，261 秒為循序加總，非實測） |
-| 截圖數量 | 16 張 |
-| 資源衝突 | 0 次 |
-| 代理間通訊 | 0 次（完全獨立） |
+| 指標             | 數值                                                 |
+| ---------------- | ---------------------------------------------------- |
+| Agent A 執行時間 | 97 秒                                                |
+| Agent B 執行時間 | 93 秒                                                |
+| Agent C 執行時間 | 71 秒                                                |
+| **平行實際耗時** | **97 秒**（取最長）                                  |
+| 循序估計耗時     | 261 秒（97 + 93 + 71）                               |
+| **節省時間**     | **估計 63%**（1 − 97/261，261 秒為循序加總，非實測） |
+| 截圖數量         | 16 張                                                |
+| 資源衝突         | 0 次                                                 |
+| 代理間通訊       | 0 次（完全獨立）                                     |
 
 97 秒 vs 261 秒——平行化的效益很直接。而且隨著測試面向增加，效益會更明顯：如果有 5 個獨立面向，循序可能要 7-8 分鐘，平行依然只需要最慢那個的時間。
 
@@ -329,12 +340,12 @@ Agent C 驗證了最容易被忽略的兩件事：Dark Mode 的狀態持久化�
 
 ## 速查表
 
-| 需求 | 推薦方案 |
-|------|----------|
-| 快速驗證 UI（一次性） | Playwright MCP |
-| 可重複 e2e 測試套件 | Playwright Skill |
-| 多流程同時測試 | 平行代理 + Skill |
-| 部署後 smoke test | 平行代理 + Skill |
+| 需求                  | 推薦方案         |
+| --------------------- | ---------------- |
+| 快速驗證 UI（一次性） | Playwright MCP   |
+| 可重複 e2e 測試套件   | Playwright Skill |
+| 多流程同時測試        | 平行代理 + Skill |
+| 部署後 smoke test     | 平行代理 + Skill |
 
 ## 延伸閱讀
 
@@ -342,3 +353,4 @@ Agent C 驗證了最容易被忽略的兩件事：Dark Mode 的狀態持久化�
 - [[從 Prompt 到系統：用 Claude Code 打造 AI 開發閉環的五層架構設計|五層架構設計]] — Skill、Rule、Memory 的分層架構，理解平行代理在整個系統中的位置
 - [[Claude Code Prompt 分層設計原則：Rule、Memory、Skill 各該放什麼？|Prompt 分層設計原則]] — Agent prompt 的設計原則也適用於 Skill 和 Rule 的 prompt 設計
 - [[gstack — 把 Claude Code 變成虛擬工程團隊的開源框架|gstack 框架分析]] — gstack 的 Browse System daemon 和 ref system 把「accessibility tree → AI 可操作」這個概念做到極致
+- [[Claude Code Skills 層：SDLC 結構化流程的按需觸發機制|Skills 層]] — 觸發機制方法論，平行代理本質是 Skills 層多 subagent 場景

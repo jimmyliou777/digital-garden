@@ -14,18 +14,18 @@ status: published
 
 ## 為什麼技術文章需要圖表
 
-寫技術文章時，最常遇到的問題是：「這段架構用文字描述了三段，讀者還是看不懂。」
+寫技術文章時，最常遇到的問題是：「這段架構用文字描述了三段，讀者還是看不懂。」圖表生成在 AI 寫作產線的位置見 [[AI 寫作工作流實戰：從主題發想到自動部署|AI 寫作工作流]]。
 
 一張圖表能做到文字做不到的事——**同時呈現元素之間的空間關係與資料流向**。但圖表工具的選擇也會影響寫作效率和維護成本。在 Quartz + Obsidian 的生態中，有兩個主要選項：
 
-| | Mermaid | Excalidraw |
-|--|---------|------------|
-| 建立方式 | Markdown code block | Obsidian plugin 視覺編輯 |
-| 風格 | 工整、正式 | 手繪、親切 |
-| 版本控制 | 純文字，diff 友善 | JSON，diff 不易讀 |
-| Dark Mode | Quartz 自動同步主題 | 需 auto-export light/dark SVG |
-| 學習曲線 | 需學語法 | 拖拉即可 |
-| 適合場景 | 流程圖、序列圖、ER 圖 | 架構圖、自由佈局、概念圖 |
+|           | Mermaid               | Excalidraw                    |
+| --------- | --------------------- | ----------------------------- |
+| 建立方式  | Markdown code block   | Obsidian plugin 視覺編輯      |
+| 風格      | 工整、正式            | 手繪、親切                    |
+| 版本控制  | 純文字，diff 友善     | JSON，diff 不易讀             |
+| Dark Mode | Quartz 自動同步主題   | 需 auto-export light/dark SVG |
+| 學習曲線  | 需學語法              | 拖拉即可                      |
+| 適合場景  | 流程圖、序列圖、ER 圖 | 架構圖、自由佈局、概念圖      |
 
 ## Mermaid：用 Code 畫圖
 
@@ -151,6 +151,7 @@ flowchart TD
 - **Export both light and dark** — 同時產生 light 和 dark 版本
 
 這會讓每個 `.excalidraw.md` 檔案旁邊自動產生：
+
 - `filename.excalidraw.light.svg`
 - `filename.excalidraw.dark.svg`
 
@@ -202,6 +203,7 @@ npx skills add axtonliu/axton-obsidian-visual-skills@excalidraw-diagram -g -y
 安裝後，在 Claude Code 中描述你要的圖表，Skill 會生成 Obsidian 格式的 `.excalidraw.md` 檔案。
 
 **注意事項**：
+
 - Skill 預設輸出 `.md`，你需要手動改名為 `.excalidraw.md`
 - 生成後需在 Obsidian 中開啟一次，觸發 auto-export SVG
 - 生成的佈局可能需要在 Excalidraw 編輯器中微調
@@ -219,20 +221,22 @@ npx skills add axtonliu/axton-obsidian-visual-skills@excalidraw-diagram -g -y
 
 ### 哪些圖適合轉換
 
-| 轉換效益高 | 轉換效益低 |
-|-----------|-----------|
-| 架構圖（元素需要分區、分層） | 簡單線性流程（A → B → C） |
-| 關係圖（多對多連線） | 序列圖（Mermaid 原生很好） |
+| 轉換效益高                     | 轉換效益低                     |
+| ------------------------------ | ------------------------------ |
+| 架構圖（元素需要分區、分層）   | 簡單線性流程（A → B → C）      |
+| 關係圖（多對多連線）           | 序列圖（Mermaid 原生很好）     |
 | 需要視覺強調（顏色、大小差異） | 數據流圖（自動佈局反而更整齊） |
 
 ## 選擇建議
 
 **用 Mermaid 的場景**：
+
 - 快速建立流程圖或序列圖，不需要精確控制佈局
 - 圖表會頻繁修改，需要 diff 友善的純文字格式
 - 簡單的 A → B → C 線性流程
 
 **用 Excalidraw 的場景**：
+
 - 架構圖需要分區、分層、自由擺放
 - 想要手繪風格讓圖表更有親和力
 - 需要精確控制元素位置和顏色

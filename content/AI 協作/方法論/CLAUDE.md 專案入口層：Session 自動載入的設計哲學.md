@@ -7,6 +7,9 @@ draft: false
 status: evergreen
 ---
 
+> [!note] 同名概念釐清
+> 本文的「Memory」指 session 自動載入的 always-load 區塊；另見 [[Claude Code Prompt 分層設計原則：Rule、Memory、Skill 各該放什麼？]] 中相同詞但指經驗類軟知識的內容歸屬層。
+
 ## 是什麼
 
 CLAUDE.md 是 Claude Code 五層架構中的 Layer 1，也是每次 session 啟動時**唯一保證自動載入**的專案指引檔。它解決的核心問題是：如何在不重複說明的前提下，讓 AI 每次對話都掌握必要的專案 context？答案不是把所有知識塞進一份文件，而是把 CLAUDE.md 設計成**索引 + 最小必要知識**——告訴 AI 有哪些規範存在、去哪裡找，而不是直接展開所有細節。
@@ -39,6 +42,8 @@ CLAUDE.md 是整個五層架構的入口，它的職責是**讓 AI 知道其他�
 ## 延伸閱讀
 
 > [!info] 站內延伸
+>
 > - [[Claude Code 系統提示詞架構優化：從 Always-Load 到按需載入|系統提示詞優化實戰]] — 從 16 個 `@` import 重構到四層按需載入的完整過程，具體說明 CLAUDE.md 應如何瘦身
 > - [[Claude Code Prompt 分層設計原則：Rule、Memory、Skill 各該放什麼？|Prompt 三層分層設計]] — 決定「某條知識該放 CLAUDE.md 還是 Rule 還是 Memory」的判斷邏輯
 > - [[AI 寫作工作流實戰：從主題發想到自動部署|AI 寫作工作流實戰]] — CLAUDE.md 作為寫作工作流的 session 入口，如何索引整套自動化流程
+> - [[AI 代理工作流實戰：從模糊需求到 Develop Done 的完整閉環|AI 代理工作流實戰]] — CLAUDE.md 作為 session 起點的閉環應用
