@@ -10,13 +10,37 @@ node_modules/
 
 # === Binary assets ===
 images/
-Excalidraw/*.excalidraw
-Excalidraw/*.excalidraw.md
-Excalidraw/*.svg
-Excalidraw/*.png
+Excalidraw/
+*.excalidraw
+*.excalidraw.md
 
 # === Graphify Output ===
 graphify-out/
 
 # === Quartz build output ===
 public/
+
+# === Quartz framework source ===
+quartz/
+quartz.config.ts
+quartz.layout.ts
+*.d.ts
+snatshot.cjs
+
+# === Repo meta / 非 vault 內容 ===
+docs/
+.augment/
+.claude/
+.github/
+openspec/
+.quartz-cache/
+package*.json
+tsconfig*.json
+Dockerfile
+.cursorrules
+README.md
+CLAUDE.md
+CODE_OF_CONDUCT.md
+LICENSE.txt
+*.png
+*.svg
