@@ -17,3 +17,6 @@ Excalidraw/*.png
 
 # === Graphify Output ===
 graphify-out/
+
+# === Quartz build output ===
+public/
