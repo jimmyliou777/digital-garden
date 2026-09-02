@@ -21,12 +21,12 @@ status: published
 
 幾個比較有感的成果：
 
-| 指標 | 改善幅度 | 怎麼做到的 |
-|------|----------|-----------|
-| 元件重用率 | **+40%** | 標準化 UI 元件庫，跨團隊共用 |
-| 開發時程 | **-33%** | 3 天 UI 任務縮短至 2 天內 |
-| Build 時間 | **8→2 分鐘** | Nx Cache + 分散式快取優化 |
-| 前端人力需求 | **-50%** | 架構標準化後，同樣產出需要更少人力 |
+| 指標         | 改善幅度     | 怎麼做到的                         |
+| ------------ | ------------ | ---------------------------------- |
+| 元件重用率   | **+40%**     | 標準化 UI 元件庫，跨團隊共用       |
+| 開發時程     | **-33%**     | 3 天 UI 任務縮短至 2 天內          |
+| Build 時間   | **8→2 分鐘** | Nx Cache + 分散式快取優化          |
+| 前端人力需求 | **-50%**     | 架構標準化後，同樣產出需要更少人力 |
 
 其中最有趣的項目是 **AI-Driven PR Reviewer Agent** — 用 OpenAI GPT + Function Calling 打造的智能代碼審查系統，自動分析 PR Diff 與 Commit 歷史，生成審查建議與風險提示，整合進 CI/CD 流程做到 PR 建立即觸發。
 
@@ -44,15 +44,15 @@ status: published
 
 ## 技術能力
 
-| 能力面向 | 具體實踐 |
-|---------|---------|
-| 大規模前端架構 | Nx Monorepo + Module Federation，多應用獨立部署、共享依賴 |
-| UI 工程化 | React + TypeScript + Tailwind + Shadcn UI，Storybook 驅動的元件庫 |
-| 全端整合 | Next.js (SSR/ISR/App Router)、Node.js、GraphQL、BFF 層設計 |
-| DevOps & 部署 | Docker、K8s (AKS)、AWS ECS、Azure DevOps Pipeline、Caddy/Nginx |
-| 可觀測性 | OpenTelemetry、Sentry、Grafana Faro、Prometheus |
-| 品質與測試 | Jest、Testing Library、Playwright、ESLint/Prettier + pre-commit hooks |
-| 技術領導 | 技術路線規劃、Sprint 管理、Code Review 文化、Mentoring、跨團隊協作 |
+| 能力面向       | 具體實踐                                                              |
+| -------------- | --------------------------------------------------------------------- |
+| 大規模前端架構 | Nx Monorepo + Module Federation，多應用獨立部署、共享依賴             |
+| UI 工程化      | React + TypeScript + Tailwind + Shadcn UI，Storybook 驅動的元件庫     |
+| 全端整合       | Next.js (SSR/ISR/App Router)、Node.js、GraphQL、BFF 層設計            |
+| DevOps & 部署  | Docker、K8s (AKS)、AWS ECS、Azure DevOps Pipeline、Caddy/Nginx        |
+| 可觀測性       | OpenTelemetry、Sentry、Grafana Faro、Prometheus                       |
+| 品質與測試     | Jest、Testing Library、Playwright、ESLint/Prettier + pre-commit hooks |
+| 技術領導       | 技術路線規劃、Sprint 管理、Code Review 文化、Mentoring、跨團隊協作    |
 
 ---
 

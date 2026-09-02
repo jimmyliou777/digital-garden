@@ -9,14 +9,12 @@ import * as Plugin from "./quartz/plugins"
 const config: QuartzConfig = {
   configuration: {
     pageTitle: "Jimmy's Blog",
-    pageTitleSuffix: "",
+    pageTitleSuffix: " — Jimmy's Blog",
     enableSPA: true,
     enablePopovers: true,
-    analytics: {
-      provider: "plausible",
-    },
-    locale: "en-US",
-    baseUrl: "quartz.jzhao.xyz",
+    analytics: null,
+    locale: "zh-TW",
+    baseUrl: "jimmyliou777.github.io/digital-garden",
     ignorePatterns: ["private", "templates", "Inbox", ".obsidian", "raw"],
     defaultDateType: "published",
     theme: {

@@ -52,14 +52,14 @@ Build pipeline 的關鍵設定（`quartz.config.ts`）：
 
 ### Frontmatter 欄位
 
-| 欄位          | 必填 | 說明                                                                              |
-| ------------- | ---- | --------------------------------------------------------------------------------- |
-| `title`       | ✅   | 頁面標題（頁面頂部、breadcrumb、SEO）                                             |
-| `description` | ✅   | 文章摘要                                                                          |
-| `tags`        | ✅   | 標籤陣列，如 `[AI, Claude Code]`                                                  |
-| `published`   | ✅   | 發布日期 `YYYY-MM-DD`                                                             |
-| `draft`       | ✅   | `true` 則不建置輸出                                                               |
-| `status`      | ✅   | 筆記成熟度：`fleeting` / `literature` / `evergreen` / `published`                 |
+| 欄位          | 必填 | 說明                                                                                          |
+| ------------- | ---- | --------------------------------------------------------------------------------------------- |
+| `title`       | ✅   | 頁面標題（頁面頂部、breadcrumb、SEO）                                                         |
+| `description` | ✅   | 文章摘要                                                                                      |
+| `tags`        | ✅   | 標籤陣列，如 `[AI, Claude Code]`                                                              |
+| `published`   | ✅   | 發布日期 `YYYY-MM-DD`                                                                         |
+| `draft`       | ✅   | `true` 則不建置輸出                                                                           |
+| `status`      | ✅   | 筆記成熟度：`fleeting` / `literature` / `evergreen` / `published`                             |
 | `shortTitle`  | 選填 | Explorer 側邊欄短標題。未設定時 fallback：有 `<空格>—<空格>` 取前半段，超過 20 字截斷加 `...` |
 
 ### 筆記成熟度
