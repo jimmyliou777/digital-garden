@@ -12,17 +12,14 @@ draft: false
 ---
 
 > [!note] 同名概念釐清
-> 本文的「Memory」指經驗類軟知識的歸屬位置；另見 [[CLAUDE.md 專案入口層：Session 自動載入的設計哲學]] 中相同詞但指 session 自動載入的 always-load 區塊。
+> 本文的「Memory」指經驗類軟知識的歸屬位置，不是指 session 啟動時自動載入的 always-load 區塊——同一個詞在 Claude Code 語境下有這兩種用法，本文一律指前者。
 
 **TL;DR：** Rule 只放「違反會出錯」的硬約束（護欄），Memory 放「不遵守不會壞，但遵守更好」的軟知識（經驗），Skill 放完整工作流程模板（SOP）。實測將兩個 rule 瘦身（jira-tools -60%、drawio-cli -46%），40 項驗收全數通過，行為與重構前完全一致。
 
 > [!NOTE] 本文定位
 > 這篇聚焦「每層該放什麼內容」的決策邏輯——「三層」指**內容性質**（Rule 護欄 / Memory 經驗 / Skill SOP），是橫向分類。
 >
-> 兩篇姊妹篇：
->
-> - [[從 Prompt 到系統：用 Claude Code 打造 AI 開發閉環的五層架構設計|五層架構設計]] — session context 如何縱向載入（載入時機）
-> - [[Claude Code 系統提示詞架構優化：從 Always-Load 到按需載入]] — 四層載入機制的觸發方式與 token 成本
+> 另一個維度是「什麼時候載入」（縱向的載入時機與 token 成本），那是不同的問題，本文不處理。
 
 ---
 
@@ -206,17 +203,10 @@ flowchart TD
 
 ## 結語
 
-這篇文章談的是「**放什麼**」——每層 prompt 機制的內容歸屬決策邏輯。姊妹篇 [[Claude Code 系統提示詞架構優化：從 Always-Load 到按需載入]] 談的是「**怎麼載入**」——四層機制的觸發方式和 token 成本。
-
-兩篇合起來，形成完整的 Claude Code prompt 架構設計指南：先用姊妹篇決定放在哪一層，再用本文決定該層裡放什麼內容。
+這篇文章談的是「**放什麼**」——每層 prompt 機制的內容歸屬決策邏輯。至於「怎麼載入」（各層的觸發時機與 token 成本）是另一個維度的問題，兩者要分開想：先決定內容屬於哪一種性質，再考慮它該在什麼時候進 context。
 
 核心就一句話：**Rule 是邊界，Memory 是經驗，Skill 是流程。**
 
 ## 延伸閱讀
 
-- [[從 Prompt 到系統：用 Claude Code 打造 AI 開發閉環的五層架構設計|五層架構設計]] — 姊妹篇，從系統層級看五層架構的設計原理
-- [[Claude Code 系統提示詞架構優化：從 Always-Load 到按需載入|系統提示詞按需載入]] — 四層載入機制的觸發方式和 token 成本
-- [[Claude Code Rules 層：Path-Based 自動載入的零配置設計|Rules 層]] — Rule 內容的載入機制
-- [[Claude Code Skills 層：SDLC 結構化流程的按需觸發機制|Skills 層]] — Skill 內容的觸發機制
-- [[CLAUDE.md 專案入口層：Session 自動載入的設計哲學|CLAUDE.md 入口層]] — Memory/CLAUDE.md 的載入哲學
-- [[AI E2E 測試實戰：用 Claude Code 平行代理同時操控三個瀏覽器驗證你的網站|AI E2E 測試實戰]] — Skill 在平行代理場景中的實際運作方式
+- [[別再寫「你是專家」— 研究告訴我們 Prompt 角色設定的真相]] — 為什麼「具體約束」比「角色修飾」有效，與本文 Rule 層的設計原則同源

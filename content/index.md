@@ -2,12 +2,10 @@
 title: 關於我
 description: jimmy-resume
 tags: [隨筆, 技術]
-published: 2025-06-01        # 發布日
-draft: false            # true 時不會出現在網站
+published: 2025-06-01
+draft: false
 status: published
 ---
-
-# Jimmy Liou
 
 資深前端主任工程師／前端技術管理 & 架構設計
 
@@ -74,5 +72,3 @@ status: published
 ## 內容導航
 
 - [[AI 協作/index|AI 協作]] — 從 Prompt 技巧到系統化 AI 開發工作流的實踐記錄
-- [[前端技術/index|前端技術]] — React 生態系與微前端架構的技術筆記
-- [[開發思維/index|開發思維]] — 開發工具鏈、工作流設計與工程實踐

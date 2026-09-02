@@ -173,8 +173,4 @@ ticket**，讓它變成單一事實來源。
 
 > [!note] 相關閱讀
 >
-> - [[AI 代理工作流實戰：從模糊需求到 Develop Done 的完整閉環]] — 對照閉環變體
-> - [[從 Prompt 到系統：用 Claude Code 打造 AI 開發閉環的五層架構設計]] — 角色分工的方法論底層
-> - [[Superpowers-OpenSpec-OAuth2-8階段實戰]] — 8 階段紀律化實作
-> - [[Claude Code之父曝15項技巧：如何讓AI自己排程寫程式？]] — 技巧 10 Worktrees
-> - [[AI 軟體工程工作流 2026：從 Spec-Driven 到 Superpowers 的實戰指南]] — 接單場景上位方法論
+> - [[Claude Code Prompt 分層設計原則：Rule、Memory、Skill 各該放什麼？|Prompt 分層設計原則]] — 本文的流程紀律要落成 prompt 時，內容該放哪一層

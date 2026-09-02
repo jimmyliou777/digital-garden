@@ -124,7 +124,6 @@ USC 研究團隊提出的解釋是**運算資源競爭**。
 
 ### 站內延伸
 
-- [[從 Prompt 到系統：用 Claude Code 打造 AI 開發閉環的五層架構設計|五層架構設計]] — 把「不寫泛用角色設定」落實在 CLAUDE.md / Commands / Skills 的系統設計
 - [[Claude Code Prompt 分層設計原則：Rule、Memory、Skill 各該放什麼？|Prompt 三層分層設計]] — Rule / Memory / Skill 的內容歸屬決策邏輯，與本文「具體指令 > 角色修飾」原則一致
 
 ### 外部資源
@@ -134,8 +133,3 @@ USC 研究團隊提出的解釋是**運算資源競爭**。
 - [Learn Prompting — Role Prompting](https://learnprompting.org/docs/advanced/zero_shot/role_prompting)
 - [Lakera — The Ultimate Guide to Prompt Engineering in 2026](https://www.lakera.ai/blog/prompt-engineering-guide)
 - [1,500+ Research Papers on Prompt Engineering — What Actually Works](https://aakashgupta.medium.com/i-spent-a-month-reading-1-500-research-papers-on-prompt-engineering-7236e7a80595)
-
-> [!note] 相關閱讀
->
-> - [[AI 寫作工作流實戰：從主題發想到自動部署]] — Prompt 角色設定在寫作產線的實戰
-> - [[AI 審查工作流實戰：從掃描分級到商業報告]] — Prompt 角色設定在審查產線的實戰
